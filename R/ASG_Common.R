@@ -1,9 +1,40 @@
-ASGCommon <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/10, thin=10){
+#' asg_common
+#' 
+#' Runs Asymmetric Gaussian MCMC with a common mean structure accross the groups
+#'
+#' @param y response variable which follows binomial dist
+#' @param x explanatory variable
+#' @param count n in binomial dist
+#' @param group groups of response
+#' @param priors list of priors
+#' @param niter number of interations to be run
+#' @param nchains number of chains to be run (default=3)
+#' @param burnin number of samples to be used as burnin (technically adaption, see link below)
+#' @param thin when you want to thin (default=10)
+#' 
+#' @seealso \url{http://www.mikemeredith.net/blog/2016/Adapt_or_burn.htm}
+#'
+#' @return A MCMC object
+#'
+#' @examples
+#' priors <- list()
+#' priors$vb1
+#' priors$vb2
+#' priors$ve
+#' priors$mx
+#' priors$vm
+#' priors$vs1
+#' priors$vs2
+#'
+#' @export
+
+
+asg_common <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/10, thin=10){
   # Load Library
   require(rjags)
   
   # Setup data for model
-  dat = list()
+  dat <- list()
   dat$y     <- y
   dat$x     <- x
   dat$num   <- count
@@ -11,12 +42,13 @@ ASGCommon <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   dat$nG    <- length(unique(group))
   dat$group <- as.numeric(group)
   # Set priors
-  dat$b1 <- priors$b1
-  dat$b2 <- priors$b2
-  dat$e  <- priors$e
-  dat$m  <- priors$m
-  dat$s1 <- priors$s1
-  dat$s2 <- priors$s2
+  dat$vb1 <- priors$vb1
+  dat$vb2 <- priors$vb2
+  dat$ve  <- priors$ve
+  dat$mx  <- priors$mx
+  dat$vm  <- priors$vm
+  dat$vs1 <- priors$vs1
+  dat$vs2 <- priors$vs2
   
   
   # Set up the model in Jags
@@ -25,20 +57,21 @@ ASGCommon <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   
   for (i in 1:n) {
     y[i] ~ dbinom(theta[i], num[i])
-    logit(theta[i]) <- muTheta[i]
+    logit(theta[i]) <- ltheta[i]
     u[i] = ifelse(x[i] < mu, 1, 0)
-    muTheta[i] = u[i]*(beta1 + (eta - beta1)*exp(-(x[i] - mu)^2 / (2*sigma1^2))) + (1-u[i])*(beta2 + (eta-beta2)*exp(-(x[i] - mu)^2 / (2*sigma2^2)))
+    ltheta[i] = u[i]*(beta1 + (eta - beta1)*exp(-(x[i] - mu)^2 / (2*sigma1^2))) + (1-u[i])*(beta2 + (eta-beta2)*exp(-(x[i] - mu)^2 / (2*sigma2^2)))
   }
   
-  beta1  ~ dnorm(0, 1/b1)
-  beta2  ~ dnorm(0, 1/b2)
-  eta    ~ dnorm(0, 1/e)
-  mu     ~ dnorm(15, 1/m)
-  sigma1 ~ dt(0, 1/s1, 1) T(0,)
-  sigma2 ~ dt(0, 1/s1, 1) T(0,)
+  beta1  ~ dnorm(0, 1/vb1)
+  beta2  ~ dnorm(0, 1/vb2)
+  log(eta) <- leta
+  leta   ~ dnorm(0, 1/ve)
+  mu     ~ dnorm(mx, 1/vm)
+  sigma1 ~ dt(0, 1/vs1, 1) T(0,)
+  sigma2 ~ dt(0, 1/vs1, 1) T(0,)
   
   }"
   m = jags.model(textConnection(ASGCommon), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("eta","mu","muTheta","beta1","beta2","theta","sigma1","sigma2"), niter, thin=thin)
+  res = coda.samples(m, c("eta","mu","ltheta","beta1","beta2","theta","sigma1","sigma2"), niter, thin=thin)
   return(res)
 }
