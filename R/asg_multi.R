@@ -18,13 +18,8 @@
 #'
 #' @examples
 #' priors <- list()
-#' priors$vb1
-#' priors$vb2
-#' priors$ve
-#' priors$mx
-#' priors$vm
-#' priors$vs1
-#' priors$vs2
+#' priors$mu0  # A 6x1 vector
+#' priors$phi0 # A 6x6 inverse var-cov matrix
 #' 
 #'
 #' @export
