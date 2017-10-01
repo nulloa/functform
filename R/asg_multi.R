@@ -1,6 +1,6 @@
 #' asg_multi
 #' 
-#' Runs Asymmetric Gaussian MCMC with an multivariate, hierarchical mean structure accross the groups
+#' Runs Asymmetric Gaussian MCMC with an multivariate, independent mean structure accross the groups
 #'
 #' @param y response variable which follows binomial dist
 #' @param x explanatory variable
@@ -52,10 +52,10 @@ asg_multi <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   model{
   
   for (i in 1:n) {
-  y[i] ~ dbinom(theta[i], num[i])
-  logit(theta[i]) <- ltheta[i]
-  u[i] = ifelse(x[i] < mu[group[i]], 1, 0)
-  ltheta[i] = u[i]*(beta1[group[i]] + (eta[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (eta[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
+    y[i] ~ dbinom(theta[i], num[i])
+    logit(theta[i]) <- ltheta[i]
+    u[i] = ifelse(x[i] < mu[group[i]], 1, 0)
+    ltheta[i] = u[i]*(beta1[group[i]] + (eta[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (eta[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
   }
   
   for (g in 1:nG) {
