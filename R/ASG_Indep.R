@@ -69,7 +69,7 @@ asg_indep <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
     leta[g] ~ dnorm(0, 1/ve)
     mu[g] ~ dnorm(mx, 1/vm)
     sigma1[g] ~ dt(0, 1/vs1, 1) T(0,)
-    sigma2[g] ~ dt(0, 1/vs1, 1) T(0,)
+    sigma2[g] ~ dt(0, 1/vs2, 1) T(0,)
   }
   
   }"

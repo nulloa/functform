@@ -68,7 +68,7 @@ asg_common <- function(y, x, count, group, priors, niter, nchains=3, burnin=nite
   leta   ~ dnorm(0, 1/ve)
   mu     ~ dnorm(mx, 1/vm)
   sigma1 ~ dt(0, 1/vs1, 1) T(0,)
-  sigma2 ~ dt(0, 1/vs1, 1) T(0,)
+  sigma2 ~ dt(0, 1/vs2, 1) T(0,)
   
   }"
   m = jags.model(textConnection(ASGCommon), data=dat, n.chains=nchains, n.adapt=burnin)
