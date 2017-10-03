@@ -84,7 +84,7 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
   tau_b2 ~ dt(0, 1/vtb2, 1) T(0,)
   
   t_e <- 1/sqrt(tau_e)
-  tau_pp ~ dt(0, 1/vte, 1) T(0,)
+  tau_e ~ dt(0, 1/vte, 1) T(0,)
   
   t_m <- 1/sqrt(tau_m)
   tau_m ~ dt(0, 1/vtm, 1) T(0,)

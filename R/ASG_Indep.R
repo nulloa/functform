@@ -45,7 +45,7 @@ asg_indep <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   dat$vb1 <- priors$vb1
   dat$vb2 <- priors$vb2
   dat$ve  <- priors$ve
-  dat$xm  <- priors$mx
+  dat$mx  <- priors$mx
   dat$vm  <- priors$vm
   dat$vs1 <- priors$vs1
   dat$vs2 <- priors$vs2
