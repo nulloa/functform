@@ -75,7 +75,7 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
     sigma2[g] ~ dt(0, t_s1, 1) T(0,)
   }
 
-  m_x ~ dorm(mx, 1/vmx)
+  m_x ~ dnorm(mx, 1/vmx)
 
   t_b1 <- 1/sqrt(tau_b1)
   tau_b1 ~ dt(0, 1/vtb1, 1) T(0,)
