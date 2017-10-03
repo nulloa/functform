@@ -41,8 +41,9 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
   dat$x     <- x
   dat$num   <- count
   dat$n     <- length(y)
-  dat$nG    <- length(unique(group))
   dat$group <- as.numeric(group)
+  dat$nG    <- length(unique(group))
+  
   # Set priors
   dat$vtb1 <- priors$vtb1
   dat$vtb2 <- priors$vtb2
