@@ -31,7 +31,7 @@ get_res_df <- function(y, x, count, group, mcmc.obj, niter, model.name){
   for (i in 1:length(y)){
     ####### Prediction and 95% PI for Y ######
     for(sim in 1:nsim){
-      PostPredSim[sim] <- rbinom(1, dat$num[i],  mcmc.obj[,c(paste("theta[", i, "]", sep=""))][niter-nsim+sim])
+      PostPredSim[sim] <- rbinom(1, count[i],  mcmc.obj[,c(paste("theta[", i, "]", sep=""))][niter-nsim+sim])
     }
     # Model 1 - ASG Indep
     ypred[i]  <- mean(PostPredSim)
