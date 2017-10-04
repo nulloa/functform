@@ -36,14 +36,14 @@ asg_multi <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   dat$x     <- x
   dat$num   <- count
   dat$n     <- length(y)
-  dat$nG    <- length(unique(group))
   dat$group <- as.numeric(group)
+  dat$nG    <- length(unique(group))
+  
   # Set priors
   dat$mu0  <- priors$mu0
+  dat$C    <- priors$C
   dat$phi0 <- priors$phi0
 
-  
-  
   # Set up the model in Jags
   Multi = "
   model{
@@ -51,14 +51,18 @@ asg_multi <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   for (i in 1:n) {
     y[i] ~ dbinom(theta[i], num[i])
     logit(theta[i]) <- ltheta[i]
-    u[i] = ifelse(x[i] < ctheta[3], 1, 0)
-    ltheta[i] = u[i]*(ctheta[1] + (exp(ctheta[3]) - ctheta[1])*exp(-(x[i] - ctheta[4])^2 / (2*exp(ctheta[5]^2)))) + (1-u[i])*(ctheta[2] + (exp(ctheta[3])-ctheta[2])*exp(-(x[i] - ctheta[4])^2 / (2*exp(ctheta[6]^2))))
+    u[i] = ifelse(x[i] < ctheta[group[i],3], 1, 0)
+    ltheta[i] = u[i]*(ctheta[group[i],1] + (exp(ctheta[group[i],3]) - ctheta[group[i],1])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],5]^2)))) + (1-u[i])*(ctheta[group[i],2] + (exp(ctheta[group[i],3])-ctheta[group[i],2])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],6]^2))))
   }
   
-  ctheta[1:6] ~ dmnorm(mu0, phi0) # c(beta1[g], beta2[g], leta[g], mu[g], lsigma1[g], lsigma2[g])
+  for(g in 1:nG){
+    ctheta[g, 1:6] ~ dmnorm(mu.theta, phi.theta) # c(beta1[g], beta2[g], leta[g], mu[g], lsigma1[g], lsigma2[g])
+  }
   
+  mu.theta[1:6] ~ dmnorm(mu0, C)
+  phi.theta[1:6,1:6] ~ dwish(phi0, 7)
   }"
   m = jags.model(textConnection(Multi), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("ctheta","theta","ltheta"), niter, thin=thin)
+  res = coda.samples(m, c("ctheta","theta","ltheta","mu.theta","phi.theta"), niter, thin=thin)
   return(res)
 }
