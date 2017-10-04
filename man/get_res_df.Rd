@@ -4,19 +4,25 @@
 \alias{get_res_df}
 \title{get_res_df}
 \usage{
-get_res_df(dat, x, niter, model.name)
+get_res_df(y, x, count, group, mcmc.obj, niter, model.name)
 }
 \arguments{
-\item{dat}{data in same format as used in functions}
+\item{y}{response variable used in mcmc}
 
-\item{x}{mcmc object}
+\item{x}{explanatory variable used in mcmc}
+
+\item{count}{n in binomial dist}
+
+\item{group}{groups of response}
+
+\item{mcmc.obj}{mcmc object}
 
 \item{niter}{number of interations to be ran}
 
 \item{model.name}{name of the model associated with df}
 }
 \value{
-A data.frame
+data.frame
 }
 \description{
 Use mcmc objects from package to get posterior estimates of theta

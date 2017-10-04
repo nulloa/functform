@@ -2,12 +2,15 @@
 #' 
 #' Use mcmc objects from package to get posterior estimates of theta
 #'
-#' @param dat data in same format as used in functions
-#' @param x mcmc object
+#' @param y response variable used in mcmc
+#' @param x explanatory variable used in mcmc
+#' @param count n in binomial dist
+#' @param group groups of response
+#' @param mcmc.obj mcmc object
 #' @param niter number of interations to be ran
 #' @param model.name name of the model associated with df
 #'
-#' @return A data.frame
+#' @return data.frame
 #'
 #' @examples
 #' 
@@ -16,19 +19,19 @@
 #'
 #' @export
 
-get_res_df <- function(dat, x, niter, model.name){
+get_res_df <- function(y, x, count, group, mcmc.obj, niter, model.name){
   # Generate True mean theta 95 Credible intervals and est mean theta lines for each model
   PThetaEst  <- UpQ <- LwQ <- NULL
   PlThetaEst <- UplTQ <- LwlTQ <- NULL
   
   # Get predictions and 95% Credible prediction intervals
-  nsim <- (niter/10)/10
+  nsim <- (niter)/10
   ypred <- UPpred <- LWpred <- PostPredSim <- NULL
   
-  for (i in 1:dat$n){
+  for (i in 1:length(y)){
     ####### Prediction and 95% PI for Y ######
     for(sim in 1:nsim){
-      PostPredSim[sim] <- rbinom(1, dat$num[i],  x[,c(paste("theta[", i, "]", sep=""))][[1]][(niter/10)-nsim+sim])
+      PostPredSim[sim] <- rbinom(1, dat$num[i],  mcmc.obj[,c(paste("theta[", i, "]", sep=""))][niter-nsim+sim])
     }
     # Model 1 - ASG Indep
     ypred[i]  <- mean(PostPredSim)
@@ -37,24 +40,24 @@ get_res_df <- function(dat, x, niter, model.name){
     
     ####### Est and 95% CI for Theta ######
     # For Model 1 - ASG Indep
-    LwQ[i]      <- quantile(x[,c(paste("theta[", i, "]", sep=""))][[1]],probs=c(.025))
-    UpQ[i]      <- quantile(x[,c(paste("theta[", i, "]", sep=""))][[1]],probs=c(.975))
-    PThetaEst[i] <- mean(x[,c(paste("theta[", i, "]", sep=""))][[1]])
+    LwQ[i]      <- quantile(mcmc.obj[,c(paste("theta[", i, "]", sep=""))],probs=c(.025))
+    UpQ[i]      <- quantile(mcmc.obj[,c(paste("theta[", i, "]", sep=""))],probs=c(.975))
+    PThetaEst[i] <- mean(mcmc.obj[,c(paste("theta[", i, "]", sep=""))])
     
     ####### Est and 95% CI for muTheta ######
-    LwlTQ[i]      <- quantile(x[,c(paste("ltheta[", i, "]", sep=""))][[1]],probs=c(.025))
-    UplTQ[i]      <- quantile(x[,c(paste("ltheta[", i, "]", sep=""))][[1]],probs=c(.975))
-    PlThetaEst[i] <- mean(x[,c(paste("ltheta[", i, "]", sep=""))][[1]])
+    LwlTQ[i]      <- quantile(mcmc.obj[,c(paste("ltheta[", i, "]", sep=""))],probs=c(.025))
+    UplTQ[i]      <- quantile(mcmc.obj[,c(paste("ltheta[", i, "]", sep=""))],probs=c(.975))
+    PlThetaEst[i] <- mean(mcmc.obj[,c(paste("ltheta[", i, "]", sep=""))])
   }
   
   
   # Create simplified data frame
-  df <- data.frame(Prop = dat$y/dat$num,
-                   nTot = dat$num,
-                   nILI = dat$y,
-                   Region = dat$region,
-                   Week = dat$week,
-                   Model = as.factor(c(rep(paste(model.name, sep=""),dat$n))),
+  df <- data.frame(Prop = y/count,
+                   nTot = count,
+                   nILI = y,
+                   Group = group,
+                   Week = x,
+                   Model = as.factor(c(rep(paste(model.name, sep=""),length(y)))),
                    PredY = c(ypred),
                    PYLB =  c(LWpred),
                    PYUB =  c(UPpred),
