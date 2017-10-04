@@ -21,7 +21,8 @@
 #' 
 #' priors <- list()
 #' priors$mu0  # A 6x1 vector
-#' priors$phi0 # A 6x6 inverse var-cov matrix
+#' priors$C    # A 6x6 precision matrix for mean MVN
+#' priors$phi0 # A 6x6 precision matrix for Wish Dist
 #' 
 #'
 #' @export

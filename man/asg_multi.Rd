@@ -30,17 +30,15 @@ asg_multi(y, x, count, group, priors, niter, nchains = 3, burnin = niter/10,
 A MCMC object
 }
 \description{
-Runs Asymmetric Gaussian MCMC with an multivariate, hierarchical mean structure accross the groups
+Runs Asymmetric Gaussian MCMC with an multivariate, independent mean structure accross the groups
 }
 \examples{
+mean.vector = c(beta1, beta2, leta, mu, lsigma1, lsigma2)
+
 priors <- list()
-priors$vb1
-priors$vb2
-priors$ve
-priors$mx
-priors$vm
-priors$vs1
-priors$vs2
+priors$mu0  # A 6x1 vector
+priors$C    # A 6x6 precision matrix for mean MVN
+priors$phi0 # A 6x6 precision matrix for Wish Dist
 
 
 }
