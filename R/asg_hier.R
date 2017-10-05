@@ -98,6 +98,6 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
   
   }"
   m = jags.model(textConnection(ASGHier), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("pp","mu","ltheta","beta1","beta2","theta","sigma1","sigma2","tau_b1","tau_b2","tau_pp","tau_m","tau_s1","tau_s2","t_b1","t_b2","t_pp","t_m","t_s1","t_s2"), niter, thin=thin)
+  res = coda.samples(m, c("eta","mu","ltheta","beta1","beta2","theta","sigma1","sigma2","tau_b1","tau_b2","tau_e","tau_m","tau_s1","tau_s2","t_b1","t_b2","t_e","t_m","t_s1","t_s2"), niter, thin=thin)
   return(res)
 }
