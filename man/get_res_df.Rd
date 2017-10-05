@@ -4,7 +4,7 @@
 \alias{get_res_df}
 \title{get_res_df}
 \usage{
-get_res_df(y, x, count, group, mcmc.obj, niter, model.name)
+get_res_df(y, x, count, group, mcmc.obj, nsim, model.name)
 }
 \arguments{
 \item{y}{response variable used in mcmc}
@@ -17,7 +17,7 @@ get_res_df(y, x, count, group, mcmc.obj, niter, model.name)
 
 \item{mcmc.obj}{mcmc object}
 
-\item{niter}{number of interations to be ran}
+\item{nsim}{number of simulation for which to make predictions (nsim < niter)}
 
 \item{model.name}{name of the model associated with df}
 }
