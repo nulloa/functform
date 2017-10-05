@@ -7,7 +7,7 @@
 #' @param count n in binomial dist
 #' @param group groups of response
 #' @param mcmc.obj mcmc object
-#' @param niter number of interations to be ran
+#' @param nsim number of simulation for which to make predictions (nsim < niter)
 #' @param model.name name of the model associated with df
 #'
 #' @return data.frame
@@ -19,13 +19,12 @@
 #'
 #' @export
 
-get_res_df <- function(y, x, count, group, mcmc.obj, niter, model.name){
+get_res_df <- function(y, x, count, group, mcmc.obj, nsim, model.name){
   # Generate True mean theta 95 Credible intervals and est mean theta lines for each model
   PThetaEst  <- UpQ <- LwQ <- NULL
   PlThetaEst <- UplTQ <- LwlTQ <- NULL
   
   # Get predictions and 95% Credible prediction intervals
-  nsim <- (niter)/10
   ypred <- UPpred <- LWpred <- PostPredSim <- NULL
   
   for (i in 1:length(y)){
