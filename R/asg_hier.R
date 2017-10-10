@@ -72,8 +72,8 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
     log(eta[g]) <- leta[g]
     leta[g]   ~ dnorm(0, t_e)
     mu[g]     ~ dnorm(m_x, t_m)
-    sigma1[g] ~ dt(0, t_s1, 1) T(0,)
-    sigma2[g] ~ dt(0, t_s1, 1) T(0,)
+    sigma1[g] ~ dt(0, t_s1, 6) T(0,)
+    sigma2[g] ~ dt(0, t_s1, 6) T(0,)
   }
 
   m_x ~ dnorm(mx, 1/vmx)
