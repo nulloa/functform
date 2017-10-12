@@ -20,7 +20,8 @@
 #' priors <- list()
 #' priors$vb1
 #' priors$vb2
-#' priors$ve
+#' priors$mn
+#' priors$vn
 #' priors$mx
 #' priors$vm
 #' priors$vs1
@@ -44,7 +45,8 @@ asg_common <- function(y, x, count, group, priors, niter, nchains=3, burnin=nite
   # Set priors
   dat$vb1 <- priors$vb1
   dat$vb2 <- priors$vb2
-  dat$ve  <- priors$ve
+  dat$mn  <- priors$mn
+  dat$vn  <- priors$vn
   dat$mx  <- priors$mx
   dat$vm  <- priors$vm
   dat$vs1 <- priors$vs1
@@ -59,19 +61,18 @@ asg_common <- function(y, x, count, group, priors, niter, nchains=3, burnin=nite
     y[i] ~ dbinom(theta[i], num[i])
     logit(theta[i]) <- ltheta[i]
     u[i] = ifelse(x[i] < mu, 1, 0)
-    ltheta[i] = u[i]*(beta1 + (eta - beta1)*exp(-(x[i] - mu)^2 / (2*sigma1^2))) + (1-u[i])*(beta2 + (eta-beta2)*exp(-(x[i] - mu)^2 / (2*sigma2^2)))
+    ltheta[i] = u[i]*(beta1 + (nu-beta1)*exp(-(x[i] - mu)^2 / (2*sigma1^2))) + (1-u[i])*(beta2 + (nu-beta2)*exp(-(x[i] - mu)^2 / (2*sigma2^2)))
   }
   
   beta1  ~ dnorm(0, 1/vb1)
   beta2  ~ dnorm(0, 1/vb2)
-  log(eta) <- leta
-  leta   ~ dnorm(0, 1/ve)
+  nu ~ dnorm(mn, 1/vn)
   mu     ~ dnorm(mx, 1/vm)
   sigma1 ~ dt(0, 1/vs1, 1) T(0,)
   sigma2 ~ dt(0, 1/vs2, 1) T(0,)
   
   }"
   m = jags.model(textConnection(ASGCommon), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("eta","mu","ltheta","beta1","beta2","theta","sigma1","sigma2"), niter, thin=thin)
+  res = coda.samples(m, c("nu","mu","ltheta","beta1","beta2","theta","sigma1","sigma2"), niter, thin=thin)
   return(res)
 }

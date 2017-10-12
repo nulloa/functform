@@ -47,7 +47,9 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
   # Set priors
   dat$vtb1 <- priors$vtb1
   dat$vtb2 <- priors$vtb2
-  dat$vte  <- priors$vte
+  dat$mn   <- priors$mn
+  dat$vmn  <- priors$vmn
+  dat$vtn  <- priors$vtn
   dat$mx   <- priors$mx
   dat$vmx  <- priors$vmx
   dat$vtm  <- priors$vtm
@@ -63,29 +65,30 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
   y[i] ~ dbinom(theta[i], num[i])
   logit(theta[i]) <- ltheta[i]
   u[i] = ifelse(x[i] < mu[group[i]], 1, 0)
-  ltheta[i] = u[i]*(beta1[group[i]] + (eta[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (eta[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
+  ltheta[i] = u[i]*(beta1[group[i]] + (nu[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (nu[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
   }
   
   for (g in 1:nG) {
     beta1[g]  ~ dnorm(0, t_b1)
     beta2[g]  ~ dnorm(0, t_b2)
-    log(eta[g]) <- leta[g]
-    leta[g]   ~ dnorm(0, t_e)
+    nu[g] ~ dnorm(m_n, t_n)
     mu[g]     ~ dnorm(m_x, t_m)
     sigma1[g] ~ dt(0, t_s1, 6) T(0,)
     sigma2[g] ~ dt(0, t_s1, 6) T(0,)
   }
 
   m_x ~ dnorm(mx, 1/vmx)
-
+  
+  m_n ~ dnorm(mn, 1/vmn)
+  
   t_b1 <- 1/sqrt(tau_b1)
   tau_b1 ~ dt(0, 1/vtb1, 1) T(0,)
   
   t_b2 <- 1/sqrt(tau_b2)
   tau_b2 ~ dt(0, 1/vtb2, 1) T(0,)
   
-  t_e <- 1/sqrt(tau_e)
-  tau_e ~ dt(0, 1/vte, 1) T(0,)
+  t_n <- 1/sqrt(tau_n)
+  tau_n ~ dt(0, 1/vtn, 1) T(0,)
   
   t_m <- 1/sqrt(tau_m)
   tau_m ~ dt(0, 1/vtm, 1) T(0,)
@@ -98,6 +101,6 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
   
   }"
   m = jags.model(textConnection(ASGHier), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("eta","mu","ltheta","beta1","beta2","theta","sigma1","sigma2","tau_b1","tau_b2","tau_e","tau_m","tau_s1","tau_s2","t_b1","t_b2","t_e","t_m","t_s1","t_s2","m_x"), niter, thin=thin)
+  res = coda.samples(m, c("nu","mu","ltheta","beta1","beta2","theta","sigma1","sigma2","tau_b1","tau_b2","tau_n","tau_m","tau_s1","tau_s2","t_b1","t_b2","t_n","t_m","t_s1","t_s2","m_x","m_n"), niter, thin=thin)
   return(res)
 }
