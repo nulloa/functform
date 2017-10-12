@@ -76,6 +76,6 @@ asg_indepln <- function(y, x, count, group, priors, niter, nchains=3, burnin=nit
   
   }"
   m = jags.model(textConnection(ASGIndep), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("eta","mu","ltheta","beta1","beta2","theta","sigma1","sigma2"), niter, thin=thin)
+  res = coda.samples(m, c("nu","mu","ltheta","beta1","beta2","theta","sigma1","sigma2"), niter, thin=thin)
   return(res)
 }
