@@ -62,13 +62,13 @@ asg_indepln <- function(y, x, count, group, priors, niter, nchains=3, burnin=nit
     y[i] ~ dbinom(theta[i], num[i])
     logit(theta[i]) <- ltheta[i]
     u[i] = ifelse(x[i] < mu[group[i]], 1, 0)
-    ltheta[i] = u[i]*(beta1[group[i]] + (eta[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (eta[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
+    ltheta[i] = u[i]*(beta1[group[i]] + (nu[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (nu[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
   }
   
   for (g in 1:nG) {
     beta1[g] ~ dnorm(0, 1/vb1)
     beta2[g] ~ dnorm(0, 1/vb2)
-    eta[g] ~ dnorm(me, 1/ve)
+    nu[g] ~ dnorm(me, 1/ve)
     mu[g] ~ dnorm(mx, 1/vm)
     sigma1[g] ~ dlnorm(ms1, 1/vs1)
     sigma2[g] ~ dlnorm(ms2, 1/vs2)
