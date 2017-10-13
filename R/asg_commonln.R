@@ -44,8 +44,8 @@ asg_commonln <- function(y, x, count, group, priors, niter, nchains=3, burnin=ni
   # Set priors
   dat$vb1 <- priors$vb1
   dat$vb2 <- priors$vb2
-  dat$me  <- priors$me
-  dat$ve  <- priors$ve
+  dat$mn  <- priors$mn
+  dat$vn  <- priors$vn
   dat$mx  <- priors$mx
   dat$vm  <- priors$vm
   dat$ms1 <- priors$ms1
@@ -67,7 +67,7 @@ asg_commonln <- function(y, x, count, group, priors, niter, nchains=3, burnin=ni
   
   beta1 ~ dnorm(0, 1/vb1)
   beta2 ~ dnorm(0, 1/vb2)
-  nu ~ dnorm(me, 1/ve)
+  nu ~ dnorm(mn, 1/vn)
   mu ~ dnorm(mx, 1/vm)
   sigma1 ~ dlnorm(ms1, 1/vs1)
   sigma2 ~ dlnorm(ms2, 1/vs2)

@@ -44,8 +44,8 @@ asg_indepln <- function(y, x, count, group, priors, niter, nchains=3, burnin=nit
   # Set priors
   dat$vb1 <- priors$vb1
   dat$vb2 <- priors$vb2
-  dat$me  <- priors$me
-  dat$ve  <- priors$ve
+  dat$mn  <- priors$mn
+  dat$vn  <- priors$vn
   dat$mx  <- priors$mx
   dat$vm  <- priors$vm
   dat$ms1 <- priors$ms1
@@ -68,7 +68,7 @@ asg_indepln <- function(y, x, count, group, priors, niter, nchains=3, burnin=nit
   for (g in 1:nG) {
     beta1[g] ~ dnorm(0, 1/vb1)
     beta2[g] ~ dnorm(0, 1/vb2)
-    nu[g] ~ dnorm(me, 1/ve)
+    nu[g] ~ dnorm(mn, 1/vn)
     mu[g] ~ dnorm(mx, 1/vm)
     sigma1[g] ~ dlnorm(ms1, 1/vs1)
     sigma2[g] ~ dlnorm(ms2, 1/vs2)
