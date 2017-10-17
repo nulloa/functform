@@ -12,8 +12,8 @@ model{
     beta2[g] ~ dnorm(0, 1/vb2)
     nu[g] ~ dnorm(mn, 1/vn)
     mu[g] ~ dnorm(mx, 1/vm)
-    sigma1[g] ~ dt(0, 1/vs1, 1) T(0,)
-    sigma2[g] ~ dt(0, 1/vs2, 1) T(0,)
+    sigma1[g] ~ dt(0, 1/cvs1, 1) T(0,)
+    sigma2[g] ~ dt(0, 1/cvs2, 1) T(0,)
   }
   
   }
