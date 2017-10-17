@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: person("Nehemias", "Ulloa", email = "nulloa1@iastate.edu", role = c("aut", "cre"))
 Description: Run Function Form Models: ASG, Normal, Log-Normal primarily for time structured group data.
 Depends: R (>= 3.3.1)
-Imports: rjags
+Imports: rjags, R2jags
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
