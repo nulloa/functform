@@ -1,0 +1,13 @@
+model{
+  
+  for (i in 1:n) {
+    y[i] ~ dbinom(theta[i], num[i])
+    logit(theta[i]) <- ltheta[i]
+    ltheta[i] ~ dlnorm(mu, sig)
+  }
+  
+  mu    ~ dnorm(mx, 1/vm)
+  sig <- 1/sigma
+  sigma ~ dt(0, 1/vs, 1) T(0,)
+
+  }

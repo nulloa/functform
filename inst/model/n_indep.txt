@@ -1,0 +1,14 @@
+model{
+  
+  for (i in 1:n) {
+    y[i] ~ dbinom(theta[i], num[i])
+    logit(theta[i]) <- ltheta[i]
+    ltheta[i] ~ dnorm(mu[group[i]], sigma[group[i]])
+  }
+  
+  for (g in 1:nG) {
+    mu[g] ~ dnorm(mx, 1/vm)
+    sigma[g] ~ dt(0, 1/vs, 1) T(0,)
+  }
+  
+  }
