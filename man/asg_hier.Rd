@@ -4,8 +4,8 @@
 \alias{asg_hier}
 \title{asg_hier}
 \usage{
-asg_hier(y, x, count, group, priors, niter, nchains = 3, burnin = niter/10,
-  thin = 10)
+asg_hier(y, x, count, group, priors, niter = 2000, nchains = 3,
+  nclusters = nchains, burnin = niter/2, thin = 10)
 }
 \arguments{
 \item{y}{response variable which follows binomial dist}
@@ -18,9 +18,11 @@ asg_hier(y, x, count, group, priors, niter, nchains = 3, burnin = niter/10,
 
 \item{priors}{list of priors}
 
-\item{niter}{number of interations to be run}
+\item{niter}{number of interations to be run (default=2000)}
 
 \item{nchains}{number of chains to be run (default=3)}
+
+\item{nclusters}{number of clusters to be used (default=nchains)}
 
 \item{burnin}{number of samples to be used as burnin (technically adaption, see link below)}
 
@@ -36,13 +38,14 @@ Runs Asymmetric Gaussian MCMC with a hierarchical mean structure accross the gro
 priors = list()
 priors$vtb1
 priors$vtb2
-priors$vte
+priors$mn
+priors$vmn
+priors$vtn
 priors$mx
 priors$vmx
 priors$vtm
 priors$vts1
 priors$vts2
-
 
 }
 \seealso{

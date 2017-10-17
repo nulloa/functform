@@ -4,8 +4,8 @@
 \alias{asg_hierln}
 \title{asg_hierln}
 \usage{
-asg_hierln(y, x, count, group, priors, niter, nchains = 3,
-  burnin = niter/10, thin = 10)
+asg_hierln(y, x, count, group, priors, niter = 2000, nchains = 3,
+  ncluster = nchains, burnin = niter/2, thin = 10)
 }
 \arguments{
 \item{y}{response variable which follows binomial dist}
@@ -18,13 +18,15 @@ asg_hierln(y, x, count, group, priors, niter, nchains = 3,
 
 \item{priors}{list of priors}
 
-\item{niter}{number of interations to be run}
+\item{niter}{number of interations to be run (default=2000)}
 
 \item{nchains}{number of chains to be run (default=3)}
 
-\item{burnin}{number of samples to be used as burnin (technically adaption, see link below)}
+\item{burnin}{number of samples to be used as burnin (technically adaption, see link below) (default=niter/2)}
 
 \item{thin}{when you want to thin (default=10)}
+
+\item{nclusters}{number of clusters to be used (default=nchains)}
 }
 \value{
 A MCMC object
@@ -34,12 +36,22 @@ Runs Asymmetric Gaussian MCMC with a hierarchical mean structure accross the gro
 }
 \examples{
 priors = list()
+#betas
 priors$vtb1
 priors$vtb2
-priors$vte
+# etas
+priors$mn
+priors$vmn
+priors$vtn
+# mus
 priors$mx
 priors$vmx
 priors$vtm
+# sigmas
+priors$ms1
+priors$vms1
+priors$ms2
+priors$vms2
 priors$vts1
 priors$vts2
 
