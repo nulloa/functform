@@ -20,9 +20,9 @@
 #' @export
 
 get_res_df <- function(y, x, count, group, mcmc.obj, nsim, model.name){
+  mcmc.obj <- coda::as.mcmc(do.call(rbind, mcmc.obj))
   # Generate True mean theta 95 Credible intervals and est mean theta lines for each model
   PThetaEst  <- UpQ <- LwQ <- NULL
-  PlThetaEst <- UplTQ <- LwlTQ <- NULL
   
   # Get predictions and 95% Credible prediction intervals
   ypred <- UPpred <- LWpred <- PostPredSim <- NULL
@@ -42,11 +42,6 @@ get_res_df <- function(y, x, count, group, mcmc.obj, nsim, model.name){
     LwQ[i]      <- quantile(mcmc.obj[,c(paste("theta[", i, "]", sep=""))],probs=c(.025))
     UpQ[i]      <- quantile(mcmc.obj[,c(paste("theta[", i, "]", sep=""))],probs=c(.975))
     PThetaEst[i] <- mean(mcmc.obj[,c(paste("theta[", i, "]", sep=""))])
-    
-    ####### Est and 95% CI for muTheta ######
-    LwlTQ[i]      <- quantile(mcmc.obj[,c(paste("ltheta[", i, "]", sep=""))],probs=c(.025))
-    UplTQ[i]      <- quantile(mcmc.obj[,c(paste("ltheta[", i, "]", sep=""))],probs=c(.975))
-    PlThetaEst[i] <- mean(mcmc.obj[,c(paste("ltheta[", i, "]", sep=""))])
   }
   
   
@@ -62,9 +57,6 @@ get_res_df <- function(y, x, count, group, mcmc.obj, nsim, model.name){
                    PYUB =  c(UPpred),
                    EstTheta = c(PThetaEst),
                    ThetaLB =  c(LwQ),
-                   ThetaUB =  c(UpQ),
-                   EstmuTheta = c(PlThetaEst),
-                   muThetaLB =  c(LwlTQ),
-                   muThetaUB =  c(UplTQ))
+                   ThetaUB =  c(UpQ))
   return(df)
 }

@@ -7,8 +7,9 @@
 #' @param count n in binomial dist
 #' @param group groups of response
 #' @param priors list of priors
-#' @param niter number of interations to be run
+#' @param niter number of interations to be run (default=2000)
 #' @param nchains number of chains to be run (default=3)
+#' @param nclusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
 #' 
@@ -27,9 +28,9 @@
 #'
 #' @export
 
-asg_multi <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/10, thin=10){
+asg_multi <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
   # Load Library
-  require(rjags)
+  require(R2jags)
   
   # Setup data for model
   dat = list()
@@ -44,26 +45,19 @@ asg_multi <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   dat$mu0  <- priors$mu0
   dat$C    <- priors$C
   dat$phi0 <- priors$phi0
+  
+  list2env(dat, envir=globalenv() )
 
   # Set up the model in Jags
-  Multi = "
-  model{
-  
-  for (i in 1:n) {
-    y[i] ~ dbinom(theta[i], num[i])
-    logit(theta[i]) <- ltheta[i]
-    u[i] = ifelse(x[i] < ctheta[group[i],3], 1, 0)
-    ltheta[i] = u[i]*(ctheta[group[i],1] + (exp(ctheta[group[i],3]) - ctheta[group[i],1])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],5]^2)))) + (1-u[i])*(ctheta[group[i],2] + (exp(ctheta[group[i],3])-ctheta[group[i],2])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],6]^2))))
-  }
-  
-  for(g in 1:nG){
-    ctheta[g, 1:6] ~ dmnorm(mu.theta, phi.theta) # c(beta1[g], beta2[g], leta[g], mu[g], lsigma1[g], lsigma2[g])
-  }
-  
-  mu.theta[1:6] ~ dmnorm(mu0, C)
-  phi.theta[1:6,1:6] ~ dwish(phi0, 7)
-  }"
-  m = jags.model(textConnection(Multi), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("ctheta","theta","ltheta","mu.theta","phi.theta"), niter, thin=thin)
-  return(res)
+  m = jags.parallel(data=dat, 
+                    inits=NULL,
+                    parameters.to.save=c("ctheta","theta","ltheta","mu.theta","phi.theta"), 
+                    model.file = "inst/model/multi_hier.txt",
+                    n.chains = nchains, 
+                    n.iter = niter,
+                    n.burnin=burnin,
+                    n.thin=thin,
+                    n.cluster= nclusters
+  )
+  return(coda::as.mcmc(m))
 }

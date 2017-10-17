@@ -7,8 +7,9 @@
 #' @param count n in binomial dist
 #' @param group groups of response
 #' @param priors list of priors
-#' @param niter number of interations to be run
+#' @param niter number of interations to be run (default=2000)
 #' @param nchains number of chains to be run (default=3)
+#' @param nclusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
 #' 
@@ -27,9 +28,9 @@
 #' @export
 
 
-normal_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/10, thin=10){
+normal_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
   # Load Library
-  require(rjags)
+  require(R2jags)
   
   # Setup data for model
   dat = list()
@@ -45,32 +46,18 @@ normal_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=nit
   dat$vmx <- priors$vmx
   dat$vs  <- priors$vs
   
+  list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
-  ASGHier = "
-  model{
-  
-  for (i in 1:n) {
-    y[i] ~ dbinom(theta[i], num[i])
-    logit(theta[i]) <- ltheta[i]
-    ltheta[i] ~ dnorm(mu[group[i]], sigma[group[i]])
-  }
-  
-  for (g in 1:nG) {
-    mu[g]    ~ dnorm(m_x, t_m)
-    sigma[g] ~ dt(0, t_s, 1) T(0,)
-  }
-  
-  m_x ~ dnorm(mx, 1/vmx)
-
-  t_m <- 1/sqrt(tau_m)
-  tau_m ~ dt(0, 1/vm, 1) T(0,)
-  
-  t_s <- 1/sqrt(tau_s)
-  tau_s ~ dt(0, 1/vs, 1) T(0,)
-
-  }"
-  m = jags.model(textConnection(ASGHier), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("theta","ltheta","mu","sigma","tau_m","tau_s","t_m","t_s"), niter, thin=thin)
-  return(res)
+  m = jags.parallel(data=dat, 
+                    inits=NULL,
+                    parameters.to.save=c("theta","mu","sigma","t_m","t_s"), 
+                    model.file = "inst/model/n_hier.txt",
+                    n.chains = nchains, 
+                    n.iter = niter,
+                    n.burnin=burnin,
+                    n.thin=thin,
+                    n.cluster= nclusters
+  )
+  return(coda::as.mcmc(m))
 }

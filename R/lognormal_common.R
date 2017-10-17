@@ -7,8 +7,9 @@
 #' @param count n in binomial dist
 #' @param group groups of response
 #' @param priors list of priors
-#' @param niter number of interations to be run
+#' @param niter number of interations to be run (default=2000)
 #' @param nchains number of chains to be run (default=3)
+#' @param nclusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
 #' 
@@ -18,17 +19,17 @@
 #'
 #' @examples
 #' priors <- list()
-#' priors$vm <- 10
-#' priors$mx <- 15
-#' priors$vs <- 10
+#' priors$vm
+#' priors$mx
+#' priors$vs
 #' 
 #'
 #' @export
 
 
-lognormal_common <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/10, thin=10){
+lognormal_common <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
   # Load Library
-  require(rjags)
+  require(R2jags)
   
   # Setup data for model
   dat <- list()
@@ -43,23 +44,18 @@ lognormal_common <- function(y, x, count, group, priors, niter, nchains=3, burni
   dat$mx <- priors$mx
   dat$vs <- priors$vs
   
+  list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
-  Common = "
-  model{
-  
-  for (i in 1:n) {
-    y[i] ~ dbinom(theta[i], num[i])
-    logit(theta[i]) <- ltheta[i]
-    ltheta[i] ~ dlnorm(mu, sig)
-  }
-  
-  mu    ~ dnorm(mx, 1/vm)
-  sig <- 1/sigma
-  sigma ~ dt(0, 1/vs, 1) T(0,)
-  
-  }"
-  m = jags.model(textConnection(Common), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("theta","ltheta","mu","sigma"), niter, thin=thin)
-  return(res)
+  m = jags.parallel(data=dat, 
+                    inits=NULL,
+                    parameters.to.save=c("theta","mu","sigma"), 
+                    model.file = "inst/model/ln_common.txt",
+                    n.chains = nchains, 
+                    n.iter = niter,
+                    n.burnin=burnin,
+                    n.thin=thin,
+                    n.cluster= nclusters
+  )
+  return(coda::as.mcmc(m))
 }

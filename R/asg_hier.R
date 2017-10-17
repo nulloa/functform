@@ -7,8 +7,9 @@
 #' @param count n in binomial dist
 #' @param group groups of response
 #' @param priors list of priors
-#' @param niter number of interations to be run
+#' @param niter number of interations to be run (default=2000)
 #' @param nchains number of chains to be run (default=3)
+#' @param nclusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
 #' 
@@ -20,20 +21,21 @@
 #' priors = list()
 #' priors$vtb1
 #' priors$vtb2
-#' priors$vte
+#' priors$mn
+#' priors$vmn
+#' priors$vtn
 #' priors$mx
 #' priors$vmx
 #' priors$vtm
 #' priors$vts1
 #' priors$vts2
 #' 
-#'
 #' @export
 
 
-asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/10, thin=10){
+asg_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
   # Load Library
-  require(rjags)
+  require(R2jags)
   
   # Setup data for model
   dat = list()
@@ -56,51 +58,18 @@ asg_hier <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/
   dat$vts1 <- priors$vts1
   dat$vts2 <- priors$vts2
   
+  list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
-  ASGHier = "
-  model{
-  
-  for (i in 1:n) {
-  y[i] ~ dbinom(theta[i], num[i])
-  logit(theta[i]) <- ltheta[i]
-  u[i] = ifelse(x[i] < mu[group[i]], 1, 0)
-  ltheta[i] = u[i]*(beta1[group[i]] + (nu[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (nu[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
-  }
-  
-  for (g in 1:nG) {
-    beta1[g]  ~ dnorm(0, t_b1)
-    beta2[g]  ~ dnorm(0, t_b2)
-    nu[g] ~ dnorm(m_n, t_n)
-    mu[g]     ~ dnorm(m_x, t_m)
-    sigma1[g] ~ dt(0, t_s1, 6) T(0,)
-    sigma2[g] ~ dt(0, t_s1, 6) T(0,)
-  }
-
-  m_x ~ dnorm(mx, 1/vmx)
-  
-  m_n ~ dnorm(mn, 1/vmn)
-  
-  t_b1 <- 1/sqrt(tau_b1)
-  tau_b1 ~ dt(0, 1/vtb1, 1) T(0,)
-  
-  t_b2 <- 1/sqrt(tau_b2)
-  tau_b2 ~ dt(0, 1/vtb2, 1) T(0,)
-  
-  t_n <- 1/sqrt(tau_n)
-  tau_n ~ dt(0, 1/vtn, 1) T(0,)
-  
-  t_m <- 1/sqrt(tau_m)
-  tau_m ~ dt(0, 1/vtm, 1) T(0,)
-  
-  t_s1 <- 1/sqrt(tau_s1)
-  tau_s1 ~ dt(0, 1/vts1, 1) T(0,)
-  
-  t_s2 <- 1/sqrt(tau_s2)
-  tau_s2 ~ dt(0, 1/vts2, 1) T(0,)
-  
-  }"
-  m = jags.model(textConnection(ASGHier), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("nu","mu","ltheta","beta1","beta2","theta","sigma1","sigma2","tau_b1","tau_b2","tau_n","tau_m","tau_s1","tau_s2","t_b1","t_b2","t_n","t_m","t_s1","t_s2","m_x","m_n"), niter, thin=thin)
-  return(res)
+  m = jags.parallel(data=dat, 
+                    inits=NULL,
+                    parameters.to.save=c("beta1","beta2","nu","mu","sigma1","sigma2","theta","t_b1","t_b2","t_n","t_m","t_s1","t_s2","m_x","m_n"),
+                    model.file = "inst/man/asg_hier.txt",
+                    n.chains = nchains, 
+                    n.iter = niter,
+                    n.burnin=burnin,
+                    n.thin=thin,
+                    n.cluster= nclusters
+  )
+  return(coda::as.mcmc(m))
 }

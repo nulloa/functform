@@ -7,8 +7,9 @@
 #' @param count n in binomial dist
 #' @param group groups of response
 #' @param priors list of priors
-#' @param niter number of interations to be run
+#' @param niter number of interations to be run (default=2000)
 #' @param nchains number of chains to be run (default=3)
+#' @param nclusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
 #' 
@@ -30,9 +31,9 @@
 #'
 #' @export
 
-asg_indep <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter/10, thin=10){
+asg_indep <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
   # Load Library
-  require(rjags)
+  require(R2jags)
   
   # Setup data for model
   dat = list()
@@ -52,29 +53,18 @@ asg_indep <- function(y, x, count, group, priors, niter, nchains=3, burnin=niter
   dat$vs1 <- priors$vs1
   dat$vs2 <- priors$vs2
   
+  list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
-  ASGIndep = "
-  model{
-  
-  for (i in 1:n) {
-    y[i] ~ dbinom(theta[i], num[i])
-    logit(theta[i]) <- ltheta[i]
-    u[i] = ifelse(x[i] < mu[group[i]], 1, 0)
-    ltheta[i] = u[i]*(beta1[group[i]] + (nu[group[i]] - beta1[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma1[group[i]]^2))) + (1-u[i])*(beta2[group[i]] + (nu[group[i]]-beta2[group[i]])*exp(-(x[i] - mu[group[i]])^2 / (2*sigma2[group[i]]^2)))
-  }
-  
-  for (g in 1:nG) {
-    beta1[g] ~ dnorm(0, 1/vb1)
-    beta2[g] ~ dnorm(0, 1/vb2)
-    nu[g] ~ dnorm(mn, 1/vn)
-    mu[g] ~ dnorm(mx, 1/vm)
-    sigma1[g] ~ dt(0, 1/vs1, 1) T(0,)
-    sigma2[g] ~ dt(0, 1/vs2, 1) T(0,)
-  }
-  
-  }"
-  m = jags.model(textConnection(ASGIndep), data=dat, n.chains=nchains, n.adapt=burnin)
-  res = coda.samples(m, c("nu","mu","ltheta","beta1","beta2","theta","sigma1","sigma2"), niter, thin=thin)
-  return(res)
+  m = jags.parallel(data=dat, 
+                    inits=NULL,
+                    parameters.to.save=c("beta1","beta2","nu","mu","sigma1","sigma2","theta"), 
+                    model.file = "inst/model/asg_indep.txt",
+                    n.chains = nchains, 
+                    n.iter = niter,
+                    n.burnin=burnin,
+                    n.thin=thin,
+                    n.cluster= nclusters
+  )
+  return(coda::as.mcmc(m))
 }
