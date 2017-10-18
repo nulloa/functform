@@ -52,7 +52,7 @@ normal_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
   m = jags.parallel(data=dat, 
                     inits=NULL,
                     parameters.to.save=c("theta","mu","sigma","t_m","t_s"), 
-                    model.file = "inst/model/n_hier.txt",
+                    model.file = system.file("model", "n_hier.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,

@@ -52,7 +52,7 @@ lognormal_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, nc
   m = jags.parallel(data=dat, 
                     inits=NULL,
                     parameters.to.save=c("theta","mu","sigma","t_m","t_s"),
-                    model.file = "inst/model/ln_hier.txt",
+                    model.file = system.file("model", "ln_hier.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,

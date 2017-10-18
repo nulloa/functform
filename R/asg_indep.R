@@ -59,7 +59,7 @@ asg_indep <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluste
   m = jags.parallel(data=dat, 
                     inits=NULL,
                     parameters.to.save=c("beta1","beta2","nu","mu","sigma1","sigma2","theta"), 
-                    model.file = "inst/model/asg_indep.txt",
+                    model.file = system.file("model", "asg_indep.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,

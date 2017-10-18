@@ -80,7 +80,7 @@ asg_hierln <- function(y, x, count, group, priors, niter=2000, nchains=3, nclust
   m = jags.parallel(data=dat, 
                     inits=NULL,
                     parameters.to.save=c("beta1","beta2","nu","mu","sigma1","sigma2","theta","t_b1","t_b2","t_n","t_m","t_s1","t_s2","m_x","m_n","m_s1","m_s2"), 
-                    model.file = "inst/model/asg_hierln.txt",
+                    model.file = system.file("model", "asg_hierln.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,

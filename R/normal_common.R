@@ -50,7 +50,7 @@ normal_common <- function(y, x, count, group, priors, niter=2000, nchains=3, ncl
   m = jags.parallel(data=dat, 
                     inits=NULL,
                     parameters.to.save=c("theta","mu","sigma"), 
-                    model.file = "inst/model/n_common.txt",
+                    model.file = system.file("model", "n_common.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,

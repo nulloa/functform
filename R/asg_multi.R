@@ -52,7 +52,7 @@ asg_multi <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluste
   m = jags.parallel(data=dat, 
                     inits=NULL,
                     parameters.to.save=c("ctheta","theta","ltheta","mu.theta","phi.theta"), 
-                    model.file = "inst/model/multi_hier.txt",
+                    model.file = system.file("model", "multi_hier.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,

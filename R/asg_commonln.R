@@ -62,7 +62,7 @@ asg_commonln <- function(y, x, count, group, priors, niter=2000, nchains=3, nclu
   m = jags.parallel(data=dat, 
                     inits=NULL,
                     parameters.to.save=c("beta1","beta2","nu","mu","sigma1","sigma2","theta"), 
-                    model.file = "inst/model/asg_commonln.txt",
+                    model.file = system.file("model", "asg_commonln.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,
