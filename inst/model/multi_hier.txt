@@ -4,7 +4,7 @@ model{
     y[i] ~ dbinom(theta[i], num[i])
     logit(theta[i]) <- ltheta[i]
     u[i] = ifelse(x[i] < ctheta[group[i],3], 1, 0)
-    ltheta[i] = u[i]*(ctheta[group[i],1] + (exp(ctheta[group[i],3]) - ctheta[group[i],1])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],5]^2)))) + (1-u[i])*(ctheta[group[i],2] + (exp(ctheta[group[i],3])-ctheta[group[i],2])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],6]^2))))
+    ltheta[i] = u[i]*(ctheta[group[i],1] + (ctheta[group[i],3] - ctheta[group[i],1])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],5]^2)))) + (1-u[i])*(ctheta[group[i],2] + (ctheta[group[i],3]-ctheta[group[i],2])*exp(-(x[i] - ctheta[group[i],4])^2 / (2*exp(ctheta[group[i],6]^2))))
   }
   
   for(g in 1:nG){
