@@ -66,5 +66,5 @@ asg_common <- function(y, x, count, group, priors, niter=2000, nchains=3, nclust
                     n.thin=thin,
                     n.cluster= nclusters
   )
-  return(coda:as.mcmc(m))
+  return(coda::as.mcmc(m))
 }
