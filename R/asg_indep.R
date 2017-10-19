@@ -50,8 +50,8 @@ asg_indep <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluste
   dat$vn  <- priors$vn
   dat$mx  <- priors$mx
   dat$vm  <- priors$vm
-  dat$vs1 <- priors$cvs1
-  dat$vs2 <- priors$cvs2
+  dat$cvs1 <- priors$cvs1
+  dat$cvs2 <- priors$cvs2
   
   list2env(dat, envir=globalenv() )
   
