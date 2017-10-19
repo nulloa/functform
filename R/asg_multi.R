@@ -51,7 +51,7 @@ asg_multi <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluste
   # Set up the model in Jags
   m = jags.parallel(data=dat, 
                     inits=NULL,
-                    parameters.to.save=c("ctheta","theta","ltheta","mu.theta","phi.theta"), 
+                    parameters.to.save=c("ctheta","theta","mu.theta","phi.theta"), 
                     model.file = system.file("model", "multi_hier.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
