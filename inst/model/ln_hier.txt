@@ -8,16 +8,16 @@ model{
   
   for (g in 1:nG) {
     mu[g]    ~ dnorm(m_x, t_m)
-    1/sqrt(sigma[g]) <- sig[g]
+    sigma[g] <- 1/(sig[g])^2
     sig[g] ~ dt(0, t_s, 4) T(0,)
   }
   
   m_x ~ dnorm(mx, 1/vmx)
 
-  1/sqrt(t_m) <- tau_m
+  t_m <- 1/(tau_m)^2
   tau_m ~ dt(0, 1/vtm, 1) T(0,)
   
-  1/sqrt(tau_s) <- tau_s
+  t_s <- 1/(tau_s)^2
   tau_s ~ dt(0, 1/vts, 1) T(0,)
 
   }

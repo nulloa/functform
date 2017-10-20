@@ -11,31 +11,31 @@ model{
     beta1[g]  ~ dnorm(0, t_b1)
     beta2[g]  ~ dnorm(0, t_b2)
     nu[g] ~ dnorm(m_n, t_n)
-    mu[g]     ~ dnorm(m_x, t_m)
+    mu[g] ~ dnorm(m_x, t_m)
     sigma1[g] ~ dt(0, t_s1, 4) T(0,)
-    sigma2[g] ~ dt(0, t_s1, 4) T(0,)
+    sigma2[g] ~ dt(0, t_s2, 4) T(0,)
   }
 
   m_x ~ dnorm(mx, 1/vmx)
   
   m_n ~ dnorm(mn, 1/vmn)
   
-  1/sqrt(t_b1) <- tau_b1
+  t_b1 <- 1/(tau_b1)^2
   tau_b1 ~ dt(0, 1/vtb1, 1) T(0,)
   
-  1/sqrt(t_b2) <- tau_b2
+  t_b2 <- 1/(tau_b2)^2
   tau_b2 ~ dt(0, 1/vtb2, 1) T(0,)
   
-  1/sqrt(t_n) <- tau_n
+  t_n <- 1/(tau_n)^2
   tau_n ~ dt(0, 1/vtn, 1) T(0,)
   
-  1/sqrt(t_m) <- tau_m
+  t_m <- 1/(tau_m)^2
   tau_m ~ dt(0, 1/vtm, 1) T(0,)
   
-  1/sqrt(t_s1) <- tau_s1
+  t_s1 <- 1/(tau_s1)^2
   tau_s1 ~ dt(0, 1/vts1, 1) T(0,)
   
-  1/sqrt(t_s2) <- tau_s2
+  t_s2 <- 1/(tau_s2)^2
   tau_s2 ~ dt(0, 1/vts2, 1) T(0,)
   
   }
