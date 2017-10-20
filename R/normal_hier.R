@@ -41,10 +41,10 @@ normal_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
   dat$nG    <- length(unique(group))
   dat$group <- as.numeric(group)
   # Set priors
-  dat$vm  <- priors$vm
   dat$mx  <- priors$mx
   dat$vmx <- priors$vmx
-  dat$vs  <- priors$vs
+  dat$vtm <- priors$vtm
+  dat$vts <- priors$vts
   
   list2env(dat, envir=globalenv() )
   
