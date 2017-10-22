@@ -26,7 +26,6 @@
 #'
 #' @export
 
-
 normal_common <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
   # Load Library
   require(R2jags)

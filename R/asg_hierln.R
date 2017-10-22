@@ -42,7 +42,7 @@
 #' @export
 
 
-asg_hierln <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluster=nchains, burnin=niter/2, thin=10){
+asg_hierln <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
   # Load Library
   require(R2jags)
   
