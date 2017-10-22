@@ -1,0 +1,73 @@
+#' asg_hier5
+#' 
+#' Runs Asymmetric Gaussian MCMC with a hierarchical mean structure accross the groups with only one intercept
+#'
+#' @param y response variable which follows binomial dist
+#' @param x explanatory variable
+#' @param count n in binomial dist
+#' @param group groups of response
+#' @param priors list of priors
+#' @param niter number of interations to be run (default=2000)
+#' @param nchains number of chains to be run (default=3)
+#' @param nclusters number of clusters to be used (default=nchains)
+#' @param burnin number of samples to be used as burnin (technically adaption, see link below)
+#' @param thin when you want to thin (default=10)
+#' 
+#' @seealso \url{http://www.mikemeredith.net/blog/2016/Adapt_or_burn.htm}
+#'
+#' @return A MCMC object
+#'
+#' @examples
+#' priors = list()
+#' priors$vtb1
+#' priors$mn
+#' priors$vmn
+#' priors$vtn
+#' priors$mx
+#' priors$vmx
+#' priors$vtm
+#' priors$vts1
+#' priors$vts2
+#' 
+#' @export
+
+
+asg_hier5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
+  # Load Library
+  require(R2jags)
+  
+  # Setup data for model
+  dat = list()
+  dat$y     <- y
+  dat$x     <- x
+  dat$num   <- count
+  dat$n     <- length(y)
+  dat$group <- as.numeric(group)
+  dat$nG    <- length(unique(group))
+  
+  # Set priors
+  dat$vtb1 <- priors$vtb1
+  dat$mn   <- priors$mn
+  dat$vmn  <- priors$vmn
+  dat$vtn  <- priors$vtn
+  dat$mx   <- priors$mx
+  dat$vmx  <- priors$vmx
+  dat$vtm  <- priors$vtm
+  dat$vts1 <- priors$vts1
+  dat$vts2 <- priors$vts2
+  
+  list2env(dat, envir=globalenv() )
+  
+  # Set up the model in Jags
+  m = jags.parallel(data=dat, 
+                    inits=NULL,
+                    parameters.to.save=c("beta1","nu","mu","sigma1","sigma2","theta","t_b1","t_n","t_m","t_s1","t_s2","m_x","m_n"),
+                    model.file = system.file("model", "asg_hier5.txt", package = "functform"),
+                    n.chains = nchains, 
+                    n.iter = niter,
+                    n.burnin=burnin,
+                    n.thin=thin,
+                    n.cluster= nclusters
+  )
+  return(coda::as.mcmc(m))
+}

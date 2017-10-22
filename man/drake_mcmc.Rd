@@ -4,8 +4,8 @@
 \alias{drake_mcmc}
 \title{drake_mcmc}
 \usage{
-drake_mcmc(d, iter = 1000, chains = 3, clusters = 3, burnin = iter/2,
-  thin = 10, whichmodel = NULL)
+drake_mcmc(d, iter = 1000, chains = 3, clusters = chains,
+  burnin = iter/2, thin = 10, whichmodel = NULL)
 }
 \arguments{
 \item{iter}{number of interations to be run (default=2000)}

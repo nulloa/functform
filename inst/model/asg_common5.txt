@@ -1,0 +1,15 @@
+model{
+  for (i in 1:n) {
+    y[i] ~ dbinom(theta[i], num[i])
+    logit(theta[i]) <- ltheta[i]
+    u[i] = ifelse(x[i] < mu, 1, 0)
+    ltheta[i] = u[i]*(beta1 + (nu-beta1)*exp(-(x[i] - mu)^2 / (2*sigma1^2))) + (1-u[i])*(beta1 + (nu-beta1)*exp(-(x[i] - mu)^2 / (2*sigma2^2)))
+  }
+  
+  beta1  ~ dnorm(0, 1/vb1)
+  nu ~ dnorm(mn, 1/vn)
+  mu     ~ dnorm(mx, 1/vm)
+  sigma1 ~ dt(0, 1/cvs1, 1) T(0,)
+  sigma2 ~ dt(0, 1/cvs2, 1) T(0,)
+  
+}

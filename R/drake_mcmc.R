@@ -44,6 +44,24 @@ drake_mcmc <- function(d, iter = 1000, chains = 3, clusters=chains, burnin = ite
     if(whichmodel=="asg_hier_ln"){
       s <- asg_hierln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
     }
+    if(whichmodel=="asg_common5"){
+      s <- asg_common5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
+    }
+    if(whichmodel=="asg_common_ln5"){
+      s <- asg_commonln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
+    }
+    if(whichmodel=="asg_indep5"){
+      s <- asg_indep5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
+    }
+    if(whichmodel=="asg_indep_ln5"){
+      s <- asg_indepln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
+    }
+    if(whichmodel=="asg_hier5"){
+      s <- asg_hier5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
+    }
+    if(whichmodel=="asg_hier_ln5"){
+      s <- asg_hierln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
+    }
     if(whichmodel=="ln_common"){
       s <- lognormal_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
     }
