@@ -20,7 +20,12 @@
 #' @export
 
 get_res_df <- function(y, x, count, group, mcmc.obj, nsim, model.name){
-  mcmc.obj <- do.call(rbind, coda::as.mcmc(mcmc.obj))
+  if(class(mcmc.obj)=="mcmc.list"){
+    mcmc.obj <- do.call(rbind, mcmc.obj)
+  }else{
+    mcmc.obj <- do.call(rbind, coda::as.mcmc(mcmc.obj))
+  }
+  
   # Generate True mean theta 95 Credible intervals and est mean theta lines for each model
   PThetaEst  <- UpQ <- LwQ <- NULL
   
