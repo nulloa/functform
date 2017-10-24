@@ -3,7 +3,7 @@ model{
   for (i in 1:n) {
     y[i] ~ dbinom(theta[i], num[i])
     logit(theta[i]) <- ltheta[i]
-    ltheta[i] = (1/(sqrt(2*3.14)*sigma*x))*exp(-(log(x) - mu)^2 / (2*sigma^2))
+    ltheta[i] = (1/(sqrt(2*3.14)*sigma*x[i]))*exp(-(log(x[i]) - mu)^2 / (2*sigma^2))
   }
   
   mu    ~ dnorm(mx, 1/vm)
