@@ -38,25 +38,9 @@ asg_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluster
   require(R2jags)
   
   # Setup data for model
-  dat = list()
-  dat$y     <- y
-  dat$x     <- x
-  dat$num   <- count
-  dat$n     <- length(y)
-  dat$group <- as.numeric(group)
-  dat$nG    <- length(unique(group))
-  
+  dat <- list(y=y, x=x, num=count, n=length(y), nG=length(unique(group)), group=as.numeric(group))
   # Set priors
-  dat$vtb1 <- priors$vtb1
-  dat$vtb2 <- priors$vtb2
-  dat$mn   <- priors$mn
-  dat$vmn  <- priors$vmn
-  dat$vtn  <- priors$vtn
-  dat$mx   <- priors$mx
-  dat$vmx  <- priors$vmx
-  dat$vtm  <- priors$vtm
-  dat$vts1 <- priors$vts1
-  dat$vts2 <- priors$vts2
+  dat <- c(dat, priors)
   
   list2env(dat, envir=globalenv() )
   

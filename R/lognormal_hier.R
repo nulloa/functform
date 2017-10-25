@@ -33,25 +33,16 @@ lognormal_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, nc
   require(R2jags)
   
   # Setup data for model
-  dat = list()
-  dat$y     <- y
-  dat$x     <- x
-  dat$num   <- count
-  dat$n     <- length(y)
-  dat$nG    <- length(unique(group))
-  dat$group <- as.numeric(group)
+  dat <- list(y=y, x=x, num=count, n=length(y),nG=length(unique(group)), group=as.numeric(group))
   # Set priors
-  dat$mx  <- priors$mx
-  dat$vmx <- priors$vmx
-  dat$vtm <- priors$vtm
-  dat$vts <- priors$vts
+  dat <- c(dat, priors)
   
   list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
   m = jags.parallel(data=dat, 
                     inits=NULL,
-                    parameters.to.save=c("theta","mu","sigma","t_m","t_s"),
+                    parameters.to.save=c("theta","mu","sigma","m_x","t_m","t_s"),
                     model.file = system.file("model", "ln_hier.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,

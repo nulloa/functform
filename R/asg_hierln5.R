@@ -46,31 +46,9 @@ asg_hierln5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
   require(R2jags)
   
   # Setup data for model
-  dat = list()
-  dat$y     <- y
-  dat$x     <- x
-  dat$num   <- count
-  dat$n     <- length(y)
-  dat$nG    <- length(unique(group))
-  dat$group <- as.numeric(group)
+  dat <- list(y=y, x=x, num=count, n=length(y), nG=length(unique(group)), group=as.numeric(group))
   # Set priors
-  #betas
-  dat$vtb1 <- priors$vtb1
-  # etas
-  dat$mn   <- priors$mn
-  dat$vmn  <- priors$vmn
-  dat$vtn  <- priors$vtn
-  # mus
-  dat$mx   <- priors$mx
-  dat$vmx  <- priors$vmx
-  dat$vtm  <- priors$vtm
-  # sigmas
-  dat$ms1 <- priors$ms1
-  dat$vms1 <- priors$vms1
-  dat$ms2 <- priors$ms2
-  dat$vms2 <- priors$vms2
-  dat$vts1 <- priors$vts1
-  dat$vts2 <- priors$vts2
+  dat <- c(dat, priors)
   
   list2env(dat, envir=globalenv() )
   

@@ -33,18 +33,9 @@ asg_multi <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluste
   require(R2jags)
   
   # Setup data for model
-  dat = list()
-  dat$y     <- y
-  dat$x     <- x
-  dat$num   <- count
-  dat$n     <- length(y)
-  dat$group <- as.numeric(group)
-  dat$nG    <- length(unique(group))
-  
+  dat <- list(y=y, x=x, num=count, n=length(y), nG=length(unique(group)), group=as.numeric(group))
   # Set priors
-  dat$mu0  <- priors$mu0
-  dat$C    <- priors$C
-  dat$phi0 <- priors$phi0
+  dat <- c(dat, priors)
   
   list2env(dat, envir=globalenv() )
 

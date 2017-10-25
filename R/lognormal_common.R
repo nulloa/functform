@@ -32,17 +32,9 @@ lognormal_common <- function(y, x, count, group, priors, niter=2000, nchains=3, 
   require(R2jags)
   
   # Setup data for model
-  dat <- list()
-  dat$y     <- y
-  dat$x     <- x
-  dat$num   <- count
-  dat$n     <- length(y)
-  dat$nG    <- length(unique(group))
-  dat$group <- as.numeric(group)
+  dat <- list(y=y, x=x, num=count, n=length(y),nG=length(unique(group)), group=as.numeric(group))
   # Set priors
-  dat$vm <- priors$vm
-  dat$mx <- priors$mx
-  dat$vs <- priors$vs
+  dat <- c(dat, priors)
   
   list2env(dat, envir=globalenv() )
   

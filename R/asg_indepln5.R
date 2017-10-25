@@ -36,23 +36,9 @@ asg_indepln5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclu
   require(R2jags)
   
   # Setup data for model
-  dat = list()
-  dat$y     <- y
-  dat$x     <- x
-  dat$num   <- count
-  dat$n     <- length(y)
-  dat$nG    <- length(unique(group))
-  dat$group <- as.numeric(group)
+  dat <- list(y=y, x=x, num=count, n=length(y), nG=length(unique(group)), group=as.numeric(group))
   # Set priors
-  dat$vb1 <- priors$vb1
-  dat$mn  <- priors$mn
-  dat$vn  <- priors$vn
-  dat$mx  <- priors$mx
-  dat$vm  <- priors$vm
-  dat$ms1 <- priors$ms1
-  dat$vs1 <- priors$vs1
-  dat$ms2 <- priors$ms2
-  dat$vs2 <- priors$vs2
+  dat <- c(dat, priors)
   
   list2env(dat, envir=globalenv() )
   
