@@ -8,8 +8,7 @@ model{
   
   for (g in 1:nG) {
     mu[g]  ~ dnorm(m_x, t_m)
-    sigma[g] <- 1/(sig[g])^2
-    sig[g] ~ dt(0, t_s, 4) T(0,)
+    sigma[g] ~ dt(0, t_s, 4) T(0,)
   }
   
   m_x ~ dnorm(mx, 1/vmx)

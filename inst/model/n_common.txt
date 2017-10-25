@@ -7,7 +7,6 @@ model{
   }
   
   mu    ~ dnorm(mx, 1/vm)
-  sigma <- 1/sig^2
-  sig ~ dt(0, 1/vs, 1) T(0,)
+  sigma ~ dt(0, 1/vs, 1) T(0,)
   
   }
