@@ -12,6 +12,8 @@
 #' @param nclusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
+#' @param mle expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.
+#' @param inits Add specific initial values
 #' 
 #' @seealso \url{http://www.mikemeredith.net/blog/2016/Adapt_or_burn.htm}
 #'
@@ -32,7 +34,7 @@
 #'
 #' @export
 
-asg_indepln <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
+asg_indepln <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10, inits=NULL, mle=FALSE){
   # Load Library
   require(R2jags)
   
@@ -41,11 +43,49 @@ asg_indepln <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
   # Set priors
   dat <- c(dat, priors)
   
+  if(isTRUE(mle)){
+    
+    asg <- Vectorize(function(x, beta1, beta2, mu, h, sigma1, sigma2){
+      top <- beta1 + (h - beta1)*exp(-((x - mu)^2)/(2*sigma1^2))
+      bot <- beta2 + (h - beta2)*exp(-((x - mu)^2)/(2*sigma2^2))
+      ifelse(x < mu,return(top),return(bot))
+    })
+    
+    log.lik <- function(y, num, x, par){
+      theta <- boot::inv.logit(asg(x, par[1], par[2], par[3], par[4], par[5], par[6]))
+      ll <- sum(lchoose(num, y)) + sum(y*log(theta)) + sum((num-y)*log(1-theta))
+      if(par[3] <= 0 | par[5] <= 0 | par[6] <= 0){ll <- -Inf}
+      return(-ll)
+    }
+    
+    c1 <- c2 <- c3 <- matrix(data=NA, ncol=6, nrow=length(unique(dat$group)))
+    for(g in 1:length(unique(dat$group))){
+      suby   <- dat$y[dat$group==g]
+      subx   <- dat$x[dat$group==g]
+      subnum <- dat$num[dat$group==g]
+      fit <- optim(par=c(-5, -5, 12, -2.5, 2, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+      fisher_info <- solve(fit$hessian)
+      prop_sigma  <- sqrt(diag(fisher_info))
+      upper <- fit$par+1.96*prop_sigma
+      lower <- fit$par-1.96*prop_sigma
+      c1[g,] <- fit$par
+      c2[g,] <- lower
+      c3[g,] <- upper
+    }
+    
+    init <- list(list("beta1"=c1[,1],"beta2"=c1[,2],"mu"=c1[,3],"nu"=c1[,4],"sigma1"=c1[,5],"sigma2"=c1[,6]),
+                  list("beta1"=c2[,1],"beta2"=c2[,2],"mu"=c2[,3],"nu"=c2[,4],"sigma1"=c2[,5],"sigma2"=c2[,6]),
+                  list("beta1"=c3[,1],"beta2"=c3[,2],"mu"=c3[,3],"nu"=c3[,4],"sigma1"=c3[,5],"sigma2"=c3[,6])
+    )
+    rm(c1,c2,c3, upper, lower, suby, subx, subnum, fit, fisher_info, prop_sigma, asg, log.lik)
+  }else{init=inits}
+
+  
   list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
   m = jags.parallel(data=dat, 
-                    inits=NULL,
+                    inits=init,
                     parameters.to.save=c("beta1","beta2","nu","mu","sigma1","sigma2","theta"), 
                     model.file = system.file("model", "asg_indepln.txt", package = "functform"),
                     n.chains = nchains, 

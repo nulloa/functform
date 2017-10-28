@@ -12,6 +12,8 @@
 #' @param nclusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
+#' @param mle expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.
+#' @param inits Add specific initial values
 #' 
 #' @seealso \url{http://www.mikemeredith.net/blog/2016/Adapt_or_burn.htm}
 #'
@@ -31,7 +33,7 @@
 #' @export
 
 
-asg_common5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10){
+asg_common5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclusters=nchains, burnin=niter/2, thin=10, inits=NULL, mle=FALSE){
   # Load Library
   require(R2jags)
   
@@ -40,11 +42,46 @@ asg_common5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
   # Set priors
   dat <- c(dat, priors)
   
+  if(isTRUE(mle)){
+    
+    asg <- Vectorize(function(x, beta1, mu, h, sigma1, sigma2){
+      top <- beta1 + (h - beta1)*exp(-((x - mu)^2)/(2*sigma1^2))
+      bot <- beta1 + (h - beta1)*exp(-((x - mu)^2)/(2*sigma2^2))
+      ifelse(x < mu,return(top),return(bot))
+    })
+    
+    log.lik <- function(y, num, x, par){
+      theta <- boot::inv.logit(asg(x, par[1], par[2], par[3], par[4], par[5]))
+      ll <- sum(lchoose(num, y)) + sum(y*log(theta)) + sum((num-y)*log(1-theta))
+      if(par[2] <= 0 | par[4] <= 0 | par[5] <= 0){ll <- -Inf}
+      return(-ll)
+    }
+    
+    c1 <- c2 <- c3 <- rep(NA, 5)
+    suby   <- dat$y[dat$group==1]
+    subx   <- dat$x[dat$group==1]
+    subnum <- dat$num[dat$group==1]
+    fit <- optim(par=c(-5, 12, -2.5, 2, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+    fisher_info <- solve(fit$hessian)
+    prop_sigma  <- sqrt(diag(fisher_info))
+    upper <- fit$par+1.96*prop_sigma
+    lower <- fit$par-1.96*prop_sigma
+    c1 <- fit$par
+    c2 <- lower
+    c3 <- upper
+    
+    init <- list(list("beta1"=c1[1],"mu"=c1[2],"nu"=c1[3],"sigma1"=c1[4],"sigma2"=c1[5]),
+                 list("beta1"=c2[1],"mu"=c2[2],"nu"=c2[3],"sigma1"=c2[4],"sigma2"=c2[5]),
+                 list("beta1"=c3[1],"mu"=c3[2],"nu"=c3[3],"sigma1"=c3[4],"sigma2"=c3[5])
+    )
+    rm(c1,c2,c3, upper, lower, suby, subx, subnum, fit, fisher_info, prop_sigma, asg, log.lik)
+  }else{init=inits}
+  
   list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
   m = jags.parallel(data=dat, 
-                    inits=NULL,
+                    inits=init,
                     parameters.to.save=c("beta1","nu","mu","sigma1","sigma2","theta"), 
                     model.file = system.file("model", "asg_common5.txt", package = "functform"),
                     n.chains = nchains, 
