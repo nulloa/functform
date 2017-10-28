@@ -58,17 +58,25 @@ asg_common <- function(y, x, count, group, priors, niter=2000, nchains=3, nclust
     }
     
     c1 <- c2 <- c3 <- rep(NA, 6)
-    suby   <- dat$y[dat$group==1]
-    subx   <- dat$x[dat$group==1]
-    subnum <- dat$num[dat$group==1]
-    fit <- optim(par=c(-5, -5, 12, -2.5, 2, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
-    fisher_info <- solve(fit$hessian)
-    prop_sigma  <- sqrt(diag(fisher_info))
-    upper <- fit$par+1.96*prop_sigma
-    lower <- fit$par-1.96*prop_sigma
-    c1 <- fit$par
-    c2 <- lower
-    c3 <- upper
+    suppressWarnings(
+      suby   <- dat$y[dat$group==1]
+      subx   <- dat$x[dat$group==1]
+      subnum <- dat$num[dat$group==1]
+      t <- try(optim(par=c(-5, -5, 12, -2.5, 10, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE))
+      if("try-error" %in% class(t)){
+        fit <- optim(par=c(-5, -5, 12, -2.5, 2, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+      }else{
+        fit <- optim(par=c(-5, -5, 12, -2.5, 10, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+      }
+      fisher_info <- MASS::ginv(fit$hessian)
+      prop_sigma  <- sqrt(abs(diag(fisher_info)))
+      prop_sigma[prop_sigma==0] <- 1
+      upper <- fit$par+1.96*prop_sigma
+      lower <- fit$par-1.96*prop_sigma
+      c1 <- fit$par
+      c2 <- lower
+      c3 <- upper
+    )
     
     init <- list(list("beta1"=c1[1],"beta2"=c1[2],"mu"=c1[3],"nu"=c1[4],"sigma1"=c1[5],"sigma2"=c1[6]),
                  list("beta1"=c2[1],"beta2"=c2[2],"mu"=c2[3],"nu"=c2[4],"sigma1"=c2[5],"sigma2"=c2[6]),

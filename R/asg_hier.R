@@ -60,19 +60,27 @@ asg_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluster
     }
     
     c1 <- c2 <- c3 <- matrix(data=NA, ncol=6, nrow=length(unique(dat$group)))
-    for(g in 1:length(unique(dat$group))){
-      suby   <- dat$y[dat$group==g]
-      subx   <- dat$x[dat$group==g]
-      subnum <- dat$num[dat$group==g]
-      fit <- optim(par=c(-5, -5, 12, -2.5, 2, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
-      fisher_info <- solve(fit$hessian)
-      prop_sigma  <- sqrt(diag(fisher_info))
-      upper <- fit$par+1.96*prop_sigma
-      lower <- fit$par-1.96*prop_sigma
-      c1[g,] <- fit$par
-      c2[g,] <- lower
-      c3[g,] <- upper
-    }
+    suppressWarnings(
+      for(g in 1:length(unique(dat$group))){
+        suby   <- dat$y[dat$group==g]
+        subx   <- dat$x[dat$group==g]
+        subnum <- dat$num[dat$group==g]
+        t <- try(optim(par=c(-5, -5, 12, -2.5, 10, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE))
+        if("try-error" %in% class(t)){
+          fit <- optim(par=c(-5, -5, 12, -2.5, 2, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+        }else{
+          fit <- optim(par=c(-5, -5, 12, -2.5, 10, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+        }
+        fisher_info <- MASS::ginv(fit$hessian)
+        prop_sigma  <- sqrt(abs(diag(fisher_info)))
+        prop_sigma[prop_sigma==0] <- 1
+        upper <- fit$par+1.96*prop_sigma
+        lower <- fit$par-1.96*prop_sigma
+        c1[g,] <- fit$par
+        c2[g,] <- lower
+        c3[g,] <- upper
+      }
+    )
     
     init <- list(list("beta1"=c1[,1],"beta2"=c1[,2],"mu"=c1[,3],"nu"=c1[,4],"sigma1"=c1[,5],"sigma2"=c1[,6]),
                  list("beta1"=c2[,1],"beta2"=c2[,2],"mu"=c2[,3],"nu"=c2[,4],"sigma1"=c2[,5],"sigma2"=c2[,6]),
