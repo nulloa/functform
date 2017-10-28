@@ -5,7 +5,7 @@
 \title{drake_mcmc}
 \usage{
 drake_mcmc(d, iter = 1000, chains = 3, clusters = chains,
-  burnin = iter/2, thin = 10, whichmodel = NULL)
+  burnin = iter/2, thin = 10, mle = FALSE, whichmodel = NULL)
 }
 \arguments{
 \item{iter}{number of interations to be run (default=2000)}
@@ -17,6 +17,8 @@ drake_mcmc(d, iter = 1000, chains = 3, clusters = chains,
 \item{burnin}{number of samples to be used as burnin (technically adaption, see link below)}
 
 \item{thin}{when you want to thin (default=10)}
+
+\item{mle}{expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.}
 
 \item{whichmodel}{characeter of which model you want to run}
 

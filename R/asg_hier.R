@@ -84,15 +84,15 @@ asg_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluster
   list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
-  m = jags.parallel(data=dat, 
+  m = jags(data=dat, 
                     inits=init,
                     parameters.to.save=c("beta1","beta2","nu","mu","sigma1","sigma2","theta","t_b1","t_b2","t_n","t_m","t_s1","t_s2","m_x","m_n"),
                     model.file = system.file("model", "asg_hier.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,
-                    n.thin=thin,
-                    n.cluster= nclusters
+                    n.thin=thin
+                    #n.cluster= nclusters
   )
   return(coda::as.mcmc(m))
 }

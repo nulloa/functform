@@ -80,15 +80,15 @@ asg_common5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
   list2env(dat, envir=globalenv() )
   
   # Set up the model in Jags
-  m = jags.parallel(data=dat, 
+  m = jags(data=dat, 
                     inits=init,
                     parameters.to.save=c("beta1","nu","mu","sigma1","sigma2","theta"), 
                     model.file = system.file("model", "asg_common5.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,
                     n.burnin=burnin,
-                    n.thin=thin,
-                    n.cluster= nclusters
+                    n.thin=thin
+                    #n.cluster= nclusters
   )
   return(coda::as.mcmc(m))
 }

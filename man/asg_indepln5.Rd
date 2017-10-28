@@ -5,7 +5,8 @@
 \title{asg_indepln5}
 \usage{
 asg_indepln5(y, x, count, group, priors, niter = 2000, nchains = 3,
-  nclusters = nchains, burnin = niter/2, thin = 10)
+  nclusters = nchains, burnin = niter/2, thin = 10, inits = NULL,
+  mle = FALSE)
 }
 \arguments{
 \item{y}{response variable which follows binomial dist}
@@ -27,6 +28,10 @@ asg_indepln5(y, x, count, group, priors, niter = 2000, nchains = 3,
 \item{burnin}{number of samples to be used as burnin (technically adaption, see link below)}
 
 \item{thin}{when you want to thin (default=10)}
+
+\item{inits}{Add specific initial values}
+
+\item{mle}{expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.}
 }
 \value{
 A MCMC object
