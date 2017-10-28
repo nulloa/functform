@@ -73,8 +73,8 @@ asg_indep5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclust
       upper <- fit$par+1.96*prop_sigma
       lower <- fit$par-1.96*prop_sigma
       c1[g,] <- fit$par
-      c2[g,] <- lower
-      c3[g,] <- upper
+      c2[g,] <- c(lower[1:3], abs(lower[4:5]))
+      c3[g,] <- c(upper[1:3], abs(upper[4:5]))
     }
     
     init <- list(list("beta1"=c1[,1],"mu"=c1[,2],"nu"=c1[,3],"sigma1"=c1[,4],"sigma2"=c1[,5]),

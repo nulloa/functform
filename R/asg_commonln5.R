@@ -73,8 +73,8 @@ asg_commonln5 <- function(y, x, count, group, priors, niter=2000, nchains=3, ncl
     upper <- fit$par+1.96*prop_sigma
     lower <- fit$par-1.96*prop_sigma
     c1 <- fit$par
-    c2 <- lower
-    c3 <- upper
+    c2 <- c(lower[1:3], abs(lower[4:5]))
+    c3 <- c(upper[1:3], abs(upper[4:5]))
     
     init <- list(list("beta1"=c1[1],"mu"=c1[2],"nu"=c1[3],"sigma1"=c1[4],"sigma2"=c1[5]),
                  list("beta1"=c2[1],"mu"=c2[2],"nu"=c2[3],"sigma1"=c2[4],"sigma2"=c2[5]),

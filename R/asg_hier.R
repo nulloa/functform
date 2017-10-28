@@ -76,8 +76,8 @@ asg_hier <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluster
         upper <- fit$par+1.96*prop_sigma
         lower <- fit$par-1.96*prop_sigma
         c1[g,] <- fit$par
-        c2[g,] <- lower
-        c3[g,] <- upper
+        c2[g,] <- c(lower[1:4], abs(lower[5:6]))
+        c3[g,] <- c(upper[1:4], abs(upper[5:6]))
       }
     
     init <- list(list("beta1"=c1[,1],"beta2"=c1[,2],"mu"=c1[,3],"nu"=c1[,4],"sigma1"=c1[,5],"sigma2"=c1[,6]),

@@ -73,8 +73,8 @@ asg_common <- function(y, x, count, group, priors, niter=2000, nchains=3, nclust
       upper <- fit$par+1.96*prop_sigma
       lower <- fit$par-1.96*prop_sigma
       c1 <- fit$par
-      c2 <- lower
-      c3 <- upper
+      c2 <- c(lower[1:4], abs(lower[5:6]))
+      c3 <- c(upper[1:4], abs(upper[5:6]))
     
     init <- list(list("beta1"=c1[1],"beta2"=c1[2],"mu"=c1[3],"nu"=c1[4],"sigma1"=c1[5],"sigma2"=c1[6]),
                  list("beta1"=c2[1],"beta2"=c2[2],"mu"=c2[3],"nu"=c2[4],"sigma1"=c2[5],"sigma2"=c2[6]),
