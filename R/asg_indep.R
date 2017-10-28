@@ -58,7 +58,6 @@ asg_indep <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluste
     }
     
     c1 <- c2 <- c3 <- matrix(data=NA, ncol=6, nrow=length(unique(dat$group)))
-    suppressWarnings(
       for(g in 1:length(unique(dat$group))){
         suby   <- dat$y[dat$group==g]
         subx   <- dat$x[dat$group==g]
@@ -78,7 +77,6 @@ asg_indep <- function(y, x, count, group, priors, niter=2000, nchains=3, ncluste
         c2[g,] <- lower
         c3[g,] <- upper
       }
-    )
     
     init <- list(list("beta1"=c1[,1],"beta2"=c1[,2],"mu"=c1[,3],"nu"=c1[,4],"sigma1"=c1[,5],"sigma2"=c1[,6]),
                  list("beta1"=c2[,1],"beta2"=c2[,2],"mu"=c2[,3],"nu"=c2[,4],"sigma1"=c2[,5],"sigma2"=c2[,6]),
