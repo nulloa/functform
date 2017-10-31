@@ -74,7 +74,13 @@ asg_hierln5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
       subnum <- dat$num[dat$group==g]
       t <- try(optim(par=c(-5, 12, -2.5, 10, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE))
       if("try-error" %in% class(t)){
-        fit <- optim(par=c(-5, 12, -2.5, 2, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+        tt <- try(optim(par=c(-5, 12, -2.5, 1, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE))
+        if("try-error" %in% class(tt)){
+          fit <- optim(par=c(-5, 12, -2.5, 1, 2), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+        }
+        else{
+          fit <- optim(par=c(-5, 12, -2.5, 1, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
+        }
       }else{
         fit <- optim(par=c(-5, 12, -2.5, 10, 10), log.lik, y=suby, x=subx, num=subnum, hessian=TRUE)
       }
