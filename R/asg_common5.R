@@ -53,7 +53,7 @@ asg_common5 <- function(y, x, count, group, priors, niter=2000, nchains=3, nclus
     log.lik <- function(y, num, x, par){
       theta <- boot::inv.logit(asg(x, par[1], par[2], par[3], par[4], par[5]))
       ll <- sum(lchoose(num, y)) + sum(y*log(theta)) + sum((num-y)*log(1-theta))
-      if(par[2] <= 0 | par[4] <= 0 | par[5] <= 0){ll <- -Inf}
+      if(par[2] <= .Machine$double.xmin | par[4] <= .Machine$double.xmin | par[5] <= .Machine$double.xmin){ll <- -Inf}
       return(-ll)
     }
     
