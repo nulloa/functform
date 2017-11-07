@@ -8,7 +8,7 @@
 #' @param clusters number of clusters to be used (default=nchains)
 #' @param burnin number of samples to be used as burnin (technically adaption, see link below)
 #' @param thin when you want to thin (default=10)
-#' @param mle expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.
+#' @param inits expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.
 #' @param whichmodel characeter of which model you want to run
 #' 
 #' @seealso \url{http://www.mikemeredith.net/blog/2016/Adapt_or_burn.htm}
@@ -21,47 +21,48 @@
 #' @export
 
 
-drake_mcmc <- function(d, iter = 1000, chains = 3, clusters=chains, burnin = iter/2, thin=10, mle=FALSE, whichmodel=NULL){
+drake_mcmc <- function(d, iter = 1000, chains = 3, clusters=chains, burnin = iter/2, thin=10, inits=NULL, whichmodel=NULL){
     if(is.null(whichmodel)) stop("No model was chosen.")
     require(functform)
-    dat <- d[c(1,2,3,4)]
-    priors <- d[-c(1,2,3,4)]
+    dat <- d$dat
+    priors <- d$priors
+    inits <- d$inits
     
     if(whichmodel=="asg_common"){
-      s <- asg_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_common_ln"){
-      s <- asg_commonln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_commonln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_indep"){
-      s <- asg_indep(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_indep(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_indep_ln"){
-      s <- asg_indepln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_indepln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_hier"){
-      s <- asg_hier(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_hier(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_hier_ln"){
-      s <- asg_hierln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_hierln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_common5"){
-      s <- asg_common5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_common5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_common_ln5"){
-      s <- asg_commonln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_commonln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_indep5"){
-      s <- asg_indep5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_indep5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_indep_ln5"){
-      s <- asg_indepln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_indepln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_hier5"){
-      s <- asg_hier5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_hier5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_hier_ln5"){
-      s <- asg_hierln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, mle=mle)
+      s <- asg_hierln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
     }
     if(whichmodel=="ln_common"){
       s <- lognormal_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
