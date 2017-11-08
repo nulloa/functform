@@ -26,7 +26,11 @@ drake_mcmc <- function(d, iter = 1000, chains = 3, clusters=chains, burnin = ite
     require(functform)
     dat <- d$dat
     priors <- d$priors
-    inits <- d$inits
+    if(whichmodel %in% c("asg_common","asg_common_ln","asg_common5","asg_common_ln5")){
+      inits <- d$cinits
+    }else{
+      inits <- d$inits
+    }
     
     if(whichmodel=="asg_common"){
       s <- asg_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
