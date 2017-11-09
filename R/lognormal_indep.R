@@ -40,7 +40,7 @@ lognormal_indep <- function(y, x, count, group, priors, niter=2000, nchains=3, n
   # Set up the model in Jags
   m = jags.parallel(data=dat, 
                     inits=NULL,
-                    parameters.to.save=c("theta","mu","sigma"),
+                    parameters.to.save=c("theta","mu","sigma","beta","nu"),
                     model.file = system.file("model", "ln_indep.txt", package = "functform"),
                     n.chains = nchains, 
                     n.iter = niter,

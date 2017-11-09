@@ -6,7 +6,7 @@ model{
   }
   
   for (g in 1:nG) {
-    beta[g]  ~ dnorm(0, t_b)
+    beta[g]  ~ dnorm(0, t_beta)
     nu[g] ~ dnorm(m_n, t_n)
     mu[g]  ~ dnorm(m_x, t_m)
     sig[g] ~ dgamma(t_a, t_b)
@@ -15,8 +15,8 @@ model{
   
   m_n ~ dnorm(mn, 1/vmn)
   
-  t_b <- 1/(tau_b)^2
-  tau_b ~ dt(0, 1/vtb, 1) T(0,)
+  t_beta <- 1/(tau_beta)^2
+  tau_beta ~ dt(0, 1/vtbeta, 1) T(0,)
   
   t_n <- 1/(tau_n)^2
   tau_n ~ dt(0, 1/vtn, 1) T(0,)
