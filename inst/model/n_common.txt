@@ -2,9 +2,11 @@ model{
   
   for (i in 1:n) {
     y[i] ~ dbinom(theta[i], num[i])
-    theta[i] = (1/(sqrt(2*3.14)*sigma))*exp(-(x[i] - mu)^2 / (2*sigma^2))
+    theta[i] = beta + (nu-beta)*(1/(sqrt(2*3.14)*sigma))*exp(-(x[i] - mu)^2 / (2*sigma^2))
   }
   
+  beta  ~ dnorm(0, 1/vbeta)
+  nu    ~ dnorm(mn, 1/vn)
   mu    ~ dnorm(mx, 1/vm)
   sig ~ dgamma(va, vb)
   sigma <- 1/sig

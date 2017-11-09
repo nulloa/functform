@@ -2,11 +2,13 @@ model{
 
   for (i in 1:n) {
     y[i] ~ dbinom(theta[i], num[i])
-    theta[i] = (1/(sqrt(2*3.14)*sigma[group[i]]*x[i]))*exp(-(log(x[i]) - mu[group[i]])^2 / (2*sigma[group[i]]^2))
+    theta[i] = beta[group[i]] + (nu[group[i]]-beta[group[i]])*(1/(sqrt(2*3.14)*sigma[group[i]]*x[i]))*exp(-(log(x[i]) - mu[group[i]])^2 / (2*sigma[group[i]]^2))
   }
   
   for (g in 1:nG) {
-    mu[g] ~ dnorm(mx, 1/vm)
+    beta[g]  ~ dnorm(0, 1/vb)
+    nu[g]    ~ dnorm(mn, 1/vn)
+    mu[g]    ~ dnorm(mx, 1/vm)
     sigma[g] ~ dt(0, 1/vs, 1) T(0,)
   }
 }
