@@ -2,7 +2,8 @@ model{
   
   for (i in 1:n) {
     y[i] ~ dbinom(theta[i], num[i])
-    theta[i] = beta + (nu-beta)*(1/(sqrt(2*3.14)*sigma*x[i]))*exp(-(log(x[i]) - mu)^2 / (2*sigma^2))
+    logit(theta[i]) <- ltheta[i]
+    ltheta[i] = beta + (nu-beta)*(1/(sqrt(2*3.14)*sigma*x[i]))*exp(-(log(x[i]) - mu)^2 / (2*sigma^2))
   }
   
   beta  ~ dnorm(0, 1/vb)
