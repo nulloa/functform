@@ -11,6 +11,6 @@ model{
     nu[g] ~ dnorm(mn, 1/vn)
     mu[g] ~ dnorm(mx, 1/vm)
     sig[g] ~ dgamma(va, vb)
-    sigma[g] <- 1/sig[g]
+    sigma[g] <- sqrt(1/sig[g])
   }
 }

@@ -10,5 +10,5 @@ model{
   nu    ~ dnorm(mn, 1/vn)
   mu    ~ dnorm(mx, 1/vm)
   sig ~ dgamma(va, vb)
-  sigma <- 1/sig
+  sigma <- sqrt(1/sig)
 }

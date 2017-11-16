@@ -11,7 +11,7 @@ model{
     nu[g] ~ dnorm(m_n, t_n)
     mu[g]  ~ dnorm(m_x, t_m)
     sig[g] ~ dgamma(t_a, t_b)
-    sigma[g] <- 1/sig[g]
+    sigma[g] <- sqrt(1/sig[g])
   }
   
   m_n ~ dnorm(mn, 1/vmn)
