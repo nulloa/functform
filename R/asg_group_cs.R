@@ -1,6 +1,6 @@
-#' asg_common
+#' asg_group_cs
 #' 
-#' Runs Asymmetric Gaussian MCMC with a common mean structure accross the group/season combinations
+#' Runs Asymmetric Gaussian MCMC with a group mean structure accross the seasons and group variances
 #'
 #' @param y response variable which follows binomial dist
 #' @param x explanatory variable
@@ -25,7 +25,7 @@
 #' @export
 
 
-asg_common <- function(y, x, count, group, season, priors, niter=4000, nwarmup=niter/2, nchains=3, thin=1, inits=NULL){
+asg_group_cs <- function(y, x, count, group, season, priors, niter=4000, nwarmup=niter/2, nchains=3, thin=1, inits=NULL){
   # Load Library
   require(rstan)
   
@@ -42,8 +42,8 @@ asg_common <- function(y, x, count, group, season, priors, niter=4000, nwarmup=n
   dat <- c(dat, priors)
   
   # Set up the model in stan
-  m <- stan(file = system.file("model", "asgCommon.stan", package = "functform"), 
-            data = dat, iter = niter, warmup=nwarmup, thin=thin, chains = nchains, 
+  m <- stan(file = system.file("model", "asgGroupCS.stan", package = "functform"), 
+            data = dat, iter = niter, warmup=nwarmup, thin=thin, chains = nchains, init = inits, 
             control = list(adapt_delta = 0.99, max_treedepth = 15))
   return(m)
 }
