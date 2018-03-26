@@ -4,25 +4,25 @@
 \alias{drake_mcmc}
 \title{drake_mcmc}
 \usage{
-drake_mcmc(d, iter = 1000, chains = 3, clusters = chains,
-  burnin = iter/2, thin = 10, mle = FALSE, whichmodel = NULL)
+drake_mcmc(d, iter = 4000, warmup = iter/2, chains = 3, thin = 1,
+  whichmodel = NULL)
 }
 \arguments{
 \item{iter}{number of interations to be run (default=2000)}
 
 \item{chains}{number of chains to be run (default=3)}
 
-\item{clusters}{number of clusters to be used (default=nchains)}
-
-\item{burnin}{number of samples to be used as burnin (technically adaption, see link below)}
-
 \item{thin}{when you want to thin (default=10)}
-
-\item{mle}{expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.}
 
 \item{whichmodel}{characeter of which model you want to run}
 
 \item{dat}{response variable which follows binomial dist}
+
+\item{clusters}{number of clusters to be used (default=nchains)}
+
+\item{burnin}{number of samples to be used as burnin (technically adaption, see link below)}
+
+\item{inits}{expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.}
 }
 \value{
 A MCMC object
@@ -31,7 +31,7 @@ A MCMC object
 A wrapper function to make running mcmc fns on drake easier
 }
 \examples{
-drake_mcmc(d, iter = 1000, chains = 3, clusters=3, burnin = iter/2, thin=10, whichmodel=="asg_common")
+drake_mcmc(d, iter = 1000, chains = 3, clusters=3, warmup = iter/2, thin=1, whichmodel=="asg_common")
 
 }
 \seealso{

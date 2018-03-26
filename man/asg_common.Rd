@@ -4,9 +4,8 @@
 \alias{asg_common}
 \title{asg_common}
 \usage{
-asg_common(y, x, count, group, priors, niter = 2000, nchains = 3,
-  nclusters = nchains, burnin = niter/2, thin = 10, inits = NULL,
-  mle = FALSE)
+asg_common(y, x, count, group, season, priors, niter = 4000,
+  nwarmup = niter/2, nchains = 3, thin = 1, inits = NULL)
 }
 \arguments{
 \item{y}{response variable which follows binomial dist}
@@ -19,38 +18,28 @@ asg_common(y, x, count, group, priors, niter = 2000, nchains = 3,
 
 \item{priors}{list of priors}
 
-\item{niter}{number of interations to be run (default=2000)}
+\item{niter}{number of interations to be run (default=4000)}
 
 \item{nchains}{number of chains to be run (default=3)}
 
-\item{nclusters}{number of clusters to be used (default=nchains)}
-
-\item{burnin}{number of samples to be used as burnin (technically adaption, see link below)}
-
-\item{thin}{when you want to thin (default=10)}
+\item{thin}{when you want to thin (default=1)}
 
 \item{inits}{Add specific initial values}
 
-\item{mle}{expects TRUE/FALSE, if TRUE will use maximum likelihood to get starting values. Needs 3 chains.}
+\item{nwarmiup}{number of iterations to be used as warmup (see link below)}
 }
 \value{
 A MCMC object
 }
 \description{
-Runs Asymmetric Gaussian MCMC with a common mean structure accross the groups
+Runs Asymmetric Gaussian MCMC with a common mean structure accross the group/season combinations
 }
 \examples{
 priors <- list()
-priors$vb1
-priors$vb2
-priors$mn
-priors$vn
-priors$mx
-priors$vm
-priors$vs1
-priors$vs2
+priors$m0
+priors$C0
 
 }
 \seealso{
-\url{http://www.mikemeredith.net/blog/2016/Adapt_or_burn.htm}
+\url{http://mc-stan.org/users/documentation/}
 }
