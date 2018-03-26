@@ -16,57 +16,42 @@
 #' @return A MCMC object
 #'
 #' @examples
-#' drake_mcmc(d, iter = 1000, chains = 3, clusters=3, burnin = iter/2, thin=10, whichmodel=="asg_common")
+#' drake_mcmc(d, iter = 1000, chains = 3, clusters=3, warmup = iter/2, thin=1, whichmodel=="asg_common")
 #'
 #' @export
 
 
-drake_mcmc <- function(d, iter = 1000, chains = 3, clusters=chains, burnin = iter/2, thin=10, inits=NULL, whichmodel=NULL){
+drake_mcmc <- function(d, iter = 4000, warmup=iter/2, chains = 3, thin=1, whichmodel=NULL){
     if(is.null(whichmodel)) stop("No model was chosen.")
     require(functform)
     dat <- d$dat
     priors <- d$priors
-    if(whichmodel %in% c("asg_common","asg_common_ln","asg_common5","asg_common_ln5")){
-      inits <- d$cinits
-    }else{
-      inits <- d$inits
-    }
+    inits <- d$inits
+
     
     if(whichmodel=="asg_common"){
-      s <- asg_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
-    }
-    if(whichmodel=="asg_common_ln"){
-      s <- asg_commonln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+      s <- asg_common(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_indep"){
-      s <- asg_indep(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+      s <- asg_indep(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
-    if(whichmodel=="asg_indep_ln"){
-      s <- asg_indepln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+    if(whichmodel=="asg_simple_cs"){
+      s <- asg_simple_cs(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
-    if(whichmodel=="asg_hier"){
-      s <- asg_hier(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+    if(whichmodel=="asg_group_cs"){
+      s <- asg_group_cs(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
-    if(whichmodel=="asg_hier_ln"){
-      s <- asg_hierln(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+    if(whichmodel=="asg_simple_sc"){
+      s <- asg_simple_sc(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
-    if(whichmodel=="asg_common5"){
-      s <- asg_common5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+    if(whichmodel=="asg_group_sc"){
+      s <- asg_group_sc(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
-    if(whichmodel=="asg_common_ln5"){
-      s <- asg_commonln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+    if(whichmodel=="asg_mix"){
+      s <- asg_mix(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
-    if(whichmodel=="asg_indep5"){
-      s <- asg_indep5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
-    }
-    if(whichmodel=="asg_indep_ln5"){
-      s <- asg_indepln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
-    }
-    if(whichmodel=="asg_hier5"){
-      s <- asg_hier5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
-    }
-    if(whichmodel=="asg_hier_ln5"){
-      s <- asg_hierln5(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin, inits=inits)
+    if(whichmodel=="asg_mix2"){
+      s <- asg_mix2(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="ln_common"){
       s <- lognormal_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
