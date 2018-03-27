@@ -30,28 +30,28 @@ drake_mcmc <- function(d, iter = 4000, warmup=iter/2, chains = 3, thin=1, whichm
 
     
     if(whichmodel=="asg_common"){
-      s <- asg_common(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_common(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_indep"){
-      s <- asg_indep(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_indep(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_simple_cs"){
-      s <- asg_simple_cs(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_simple_cs(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_group_cs"){
-      s <- asg_group_cs(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_group_cs(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_simple_sc"){
-      s <- asg_simple_sc(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_simple_sc(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_group_sc"){
-      s <- asg_group_sc(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_group_sc(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_mix"){
-      s <- asg_mix(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_mix(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="asg_mix2"){
-      s <- asg_mix2(dat$y, dat$x, dat$num, dat$og_group, dat$og_season, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
+      s <- asg_mix2(dat$y, dat$x, dat$num, dat$group, dat$seas, priors, nchains=chains, nwarmup=warmup, niter=iter, thin=thin, inits=inits)
     }
     if(whichmodel=="ln_common"){
       s <- lognormal_common(dat$y, dat$week, dat$num, dat$group, priors, nchains=chains, nclusters=clusters, niter=iter, burnin=burnin, thin=thin)
