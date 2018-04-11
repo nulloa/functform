@@ -18,13 +18,7 @@
 #' @export
 
 
-asg_mle <- function(y, x, num, group, season, inits=NULL, ll=NULL){
-  
-  asg <- Vectorize(function(x, beta1, beta2, mu, h, sigma1, sigma2){
-    top <- beta1 + (h - beta1)*exp(-((x - mu)^2)/(2*sigma1^2))
-    bot <- beta2 + (h - beta2)*exp(-((x - mu)^2)/(2*sigma2^2))
-    ifelse(x < mu,return(top),return(bot))
-  })
+asg_mle <- function(y, x, num, group, season, inits=NULL, ll=NULL, correction=TRUE){
   
   log.lik <- function(y, num, x, par){
     theta <- boot::inv.logit(asg(x, par[1], par[2], par[3], par[4], par[5], par[6]))
@@ -43,9 +37,46 @@ asg_mle <- function(y, x, num, group, season, inits=NULL, ll=NULL){
     for(g in 1:length(unique(df$group))){
       dat <- subset(df, season==paste(unique(df$season)[s], sep="") & group==paste(unique(df$group)[g], sep=""))
       opts <- optim(par=inits, ll, y=dat$y, x=dat$x, num=dat$num)
-      opt[unique(df$group)[g], unique(df$season)[s], ] <- c(opts$par[1], opts$par[2], opts$par[4], opts$par[3], opts$par[5], opts$par[6])
+      newopts <-  c(opts$par[1], opts$par[2], opts$par[4], opts$par[3], opts$par[5], opts$par[6])
+      if(correction==TRUE & g >= 2){
+        whichoff <- abs(newopts - opt[unique(df$group)[g-1], unique(df$season)[s], ]) > 500
+        newopts[whichoff] <- opt[unique(df$group)[g-1], unique(df$season)[s], ][whichoff]
+      }
+      
+      opt[unique(df$group)[g], unique(df$season)[s], ] <- newopts
     }
   }
   
   return(opt)
 }
+
+
+
+
+
+#' asg
+#' 
+#' A function for the ff of the ASG Distribution
+#' 
+#' @param x explanatory variable
+#' @param beta1 intercept in first half
+#' @param beta2 intercept in second half
+#' @param mu peak week
+#' @param h peak
+#' @param sigma1 variance in first half
+#' @param sigma2 variance in second half
+#'
+#' @return A function
+#'
+#' @examples
+#' asg(x=c(1:33), beta1=-4, beta2=-1, mu=15, h=10, sigma1=10, sigma2=15)
+#'
+#' @export
+
+
+
+asg <- Vectorize(function(x, beta1, beta2, mu, h, sigma1, sigma2){
+  top <- beta1 + (h - beta1)*exp(-((x - mu)^2)/(2*sigma1^2))
+  bot <- beta2 + (h - beta2)*exp(-((x - mu)^2)/(2*sigma2^2))
+  ifelse(x < mu,return(top),return(bot))
+})
