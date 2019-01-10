@@ -15,7 +15,7 @@ data {
 parameters {
   matrix[nS, k] ctheta [nG]; // Parameters for Each Year.  This is nG x nS x K array
   vector<lower=0> [k] tau; // Standard Deviation for Parameters for S seasons
-  vector<lower=0> [k] tau2;
+  //vector<lower=0> [k] tau2;
   cholesky_factor_corr[k] Lcorr;
   vector[k] mu_theta[nG]; // Means for Parameters; This is nG x K matrix
   vector[k] mu_g;
@@ -39,13 +39,13 @@ model {
   //Prior for Error Terms by Year
   mu_g ~ multi_normal(mu0, C0); //prior on season mean
   tau ~ student_t(4, 0, 1); //Prior on group SD
-  tau2 ~ student_t(4, 0, 1); //Prior on Season SD
+  //tau2 ~ student_t(4, 0, 1); //Prior on Season SD
   Lcorr ~ lkj_corr_cholesky(1); //prior for correlations
   
   for(g in 1:nG){
     mu_theta[g] ~ multi_normal_cholesky(mu_g, diag_pre_multiply(tau, Lcorr));
     for(s in 1:nS){
-      row(ctheta[g], s) ~ multi_normal_cholesky(mu_theta[g], diag_pre_multiply(tau2, Lcorr)); // c(beta1[g], beta2[g], leta[g], mu[g], lsigma1[g], lsigma2[g])
+      row(ctheta[g], s) ~ multi_normal_cholesky(mu_theta[g], diag_pre_multiply(tau, Lcorr)); // c(beta1[g], beta2[g], leta[g], mu[g], lsigma1[g], lsigma2[g])
     }
   }
   
